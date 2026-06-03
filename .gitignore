@@ -1,2 +1,8 @@
 node_modules
 guidelines
+.env
+.env.local
+.env*.local
+.next/
+tsconfig.tsbuildinfo
+prisma/dev.db
