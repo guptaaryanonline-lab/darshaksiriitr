@@ -17,12 +17,12 @@ export default async function HomePage() {
 
       <section className="relative flex min-h-[calc(100vh-73px)] items-center overflow-hidden">
         <HeroCarousel />
-        <div className="relative mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 lg:px-10">
+        <div className="relative mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:px-10">
           <div className="max-w-3xl text-white">
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-cyan-200">RISHI Lab, IIT Roorkee</p>
             <h1 className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">Dr. Darshak Bhatt</h1>
-            <p className="mt-5 text-xl text-white/90">Associate Professor, Electronics and Communication Engineering</p>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-white/82">
+            <p className="mt-5 text-lg sm:text-xl text-white/90">Associate Professor, Electronics and Communication Engineering</p>
+            <p className="mt-5 max-w-2xl text-base sm:text-lg leading-8 text-white/82">
               Advancing RF microelectronics and analog circuit design for wireless, quantum, and sub-THz applications.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">

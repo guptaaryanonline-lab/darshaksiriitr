@@ -90,16 +90,16 @@ export function Home() {
                 of wireless communication and enable next-generation technologies.
               </p>
               <div className="flex gap-4">
-                <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="px-6 py-3 bg-blue-600 rounded hover:bg-blue-700 transition-colors">
                   Contact Me
                 </a>
-                <a href="#" className="px-6 py-3 border border-slate-300 text-slate-700 rounded hover:bg-slate-50 transition-colors">
+                <a href="#" className="px-6 py-3 border border-slate-300  rounded hover:bg-slate-50 transition-colors">
                   Download CV
                 </a>
               </div>
             </div>
           </div>
-          <div className="order-1 lg:order-2 h-96 lg:h-auto">
+          <div className="order-1 lg:order-2 h-85 min-h-[30rem] lg:h-full lg:min-h-[35rem]">
             <img
               src={myPhoto}
               alt="Dr. Darshak Bhatt"
