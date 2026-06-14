@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Save, Trash2, UploadCloud } from "lucide-react";
+import { Plus, Save, Trash2, UploadCloud, X } from "lucide-react";
 import { resources, type ResourceName } from "@/lib/admin-resources";
 import { toast } from "sonner";
 import { Toaster } from "@/legacy/components/ui/sonner";
@@ -83,6 +83,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
   };
   const [draft, setDraft] = useState<Item>(() => ({ ...emptyItem.projects, sortOrder: getNextSortOrder("projects") }));
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
@@ -99,6 +100,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
   function changeResource(resource: ResourceName) {
     setActive(resource);
     setEditingId(null);
+    setFormOpen(false);
     setDraft({ ...emptyItem[resource], sortOrder: getNextSortOrder(resource) });
     setMessage("");
   }
@@ -106,11 +108,39 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
   function showUploadTab() {
     setActive("upload");
     setEditingId(null);
+    setFormOpen(false);
+    setMessage("");
+  }
+
+  function openNewForm() {
+    if (active === "upload") return;
+    const resource = active as ResourceName;
+    setEditingId(null);
+    setDraft({ ...emptyItem[resource], sortOrder: getNextSortOrder(resource) });
+    setFormOpen(true);
+    setMessage("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function closeForm() {
+    if (active === "upload") {
+      setUploadFile(null);
+      setUploadUrl("");
+      setUploadError("");
+      setActive("projects");
+      setDraft({ ...emptyItem.projects, sortOrder: getNextSortOrder("projects") });
+      return;
+    }
+
+    setEditingId(null);
+    setFormOpen(false);
+    setDraft({ ...emptyItem[active], sortOrder: getNextSortOrder(active) });
     setMessage("");
   }
 
   function edit(item: Item) {
     setEditingId(String(item.id));
+    setFormOpen(true);
     if (active === "upload") return;
     setDraft(toDraft(active, item));
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -239,8 +269,8 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
             <p className="mt-1 text-sm text-slate-600">Signed in as {email}</p>
           </div>
           <div className="flex gap-2">
-            <a href="/" className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">View site</a>
-            <button onClick={logout} className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white">Logout</button>
+            <a href="/" className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">View site</a>
+            <button onClick={logout} className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">Logout</button>
           </div>
         </div>
       </header>
@@ -252,7 +282,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
                 key={resource}
                 onClick={() => changeResource(resource)}
                 className={`mb-1 flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-semibold ${
-                  active === resource ? "bg-navy text-white" : "text-slate-700 hover:bg-slate-100"
+                  active === resource ? "bg-blue-600 text-white" : "text-slate-700 hover:bg-slate-100"
                 }`}
               >
                 {resources[resource].label}
@@ -262,7 +292,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
             <button
               onClick={showUploadTab}
               className={`mb-1 flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-semibold ${
-                active === "upload" ? "bg-navy text-white" : "text-slate-700 hover:bg-slate-100"
+                active === "upload" ? "bg-blue-600 text-white" : "text-slate-700 hover:bg-slate-100"
               }`}
             >
               <span>Image Upload</span>
@@ -273,9 +303,19 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
           {active === "upload" ? (
             <form onSubmit={uploadImage} className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
               <Toaster />
-              <div className="mb-4 flex items-center gap-2">
-                <UploadCloud className="h-5 w-5 text-teal" />
-                <h2 className="text-lg font-semibold text-ink">Dedicated Image Upload</h2>
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <UploadCloud className="h-5 w-5 text-teal" />
+                  <h2 className="text-lg font-semibold text-ink">Dedicated Image Upload</h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeForm}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 transition hover:bg-slate-50"
+                  aria-label="Close image upload form"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
               <p className="mb-3 text-sm text-slate-600">
                 This is a standalone image upload tab. Upload an image here and copy the returned URL into any item&apos;s image field.
@@ -293,7 +333,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
                 <button
                   type="submit"
                   disabled={uploading}
-                  className="inline-flex items-center justify-center rounded-md bg-navy px-5 py-3 text-sm font-semibold text-white hover:bg-ink disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center rounded-md bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {uploading ? "Uploading..." : "Upload image"}
                 </button>
@@ -309,49 +349,77 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
             </form>
           ) : (
             <>
-              <form onSubmit={save} className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
-                <Toaster />
-                <fieldset disabled={isSaving} aria-busy={isSaving}>
-                  <div className="mb-5 flex items-center justify-between gap-4">
+              {!formOpen && !editingId ? (
+                <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-soft">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h2 className="text-xl font-semibold text-ink">{resources[active].label}</h2>
+                      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                        The create form is hidden until you click Add New. This keeps each tab focused and avoids an overwhelming dashboard experience.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={openNewForm}
+                      className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add New
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={save} className="rounded-lg border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
+                  <Toaster />
+                  <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <h2 className="text-xl font-semibold text-ink">{title}</h2>
                       <p className="mt-1 text-sm text-slate-600">{resources[active].label} content is stored in the database.</p>
                     </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={openNewForm}
+                        className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700"
+                      >
+                        <Plus className="h-4 w-4" />
+                        New
+                      </button>
+                      <button
+                        type="button"
+                        onClick={closeForm}
+                        className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                        aria-label={`Close ${resources[active].label} form`}
+                      >
+                        <X className="h-4 w-4" />
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                  <fieldset disabled={isSaving} aria-busy={isSaving}>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {fields.map((field) => (
+                        <FieldInput
+                          key={field}
+                          field={field}
+                          active={active}
+                          value={draft[field]}
+                          onChange={(value) => setDraft((current) => ({ ...current, [field]: value }))}
+                        />
+                      ))}
+                    </div>
+
+                    {message ? <p className="mt-4 rounded-md bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700">{message}</p> : null}
                     <button
-                      type="button"
-                      onClick={() => {
-                        setEditingId(null);
-                        setDraft({ ...emptyItem[active], sortOrder: getNextSortOrder(active) });
-                      }}
-                      className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700"
+                      type="submit"
+                      className="mt-5 inline-flex items-center gap-2 rounded-md bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700"
                     >
-                      <Plus className="h-4 w-4" />
-                      New
+                      <Save className={`h-4 w-4 ${isSaving ? "animate-spin" : ""}`} />
+                      {isSaving ? "Saving..." : "Save"}
                     </button>
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {fields.map((field) => (
-                      <FieldInput
-                        key={field}
-                        field={field}
-                        active={active}
-                        value={draft[field]}
-                        onChange={(value) => setDraft((current) => ({ ...current, [field]: value }))}
-                      />
-                    ))}
-                  </div>
-
-                  {message ? <p className="mt-4 rounded-md bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700">{message}</p> : null}
-                  <button
-                    type="submit"
-                    className="mt-5 inline-flex items-center gap-2 rounded-md bg-teal px-5 py-3 text-sm font-semibold text-white hover:bg-[#0d5557]"
-                  >
-                    <Save className={`h-4 w-4 ${isSaving ? "animate-spin" : ""}`} />
-                    {isSaving ? "Saving..." : "Save"}
-                  </button>
-                </fieldset>
-              </form>
+                  </fieldset>
+                </form>
+              )}
 
               <div className="rounded-lg border border-slate-200 bg-white shadow-soft">
                 <div className="border-b border-slate-200 p-5">

@@ -38,7 +38,7 @@ export default function CopyableUrl({ url = '', label = 'URL' }: CopyableUrlProp
       <button
         type="button"
         onClick={handleCopy}
-        className="ml-2 rounded bg-sky-600 px-3 py-2 text-sm font-medium text-white hover:bg-sky-700"
+        className="ml-2 rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
       >
         {copied ? 'Copied' : 'Copy'}
       </button>

@@ -99,13 +99,13 @@ export function Home() {
               </div>
             </div>
           </div>
-          <div className="order-1 lg:order-2 h-85 min-h-[30rem] lg:h-full lg:min-h-[35rem]">
-            <img
-              src={myPhoto}
-              alt="Dr. Darshak Bhatt"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <div className="order-1 lg:order-2 h-[60vh] min-h-[20rem] lg:h-[60vh] p-2">
+         <img
+         src={myPhoto}
+         alt="Dr. Darshak Bhatt"
+         className="w-full h-full object-cover"
+         />
+       </div>
         </div>
       </section>
 

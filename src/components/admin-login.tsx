@@ -58,7 +58,7 @@ export function AdminLogin() {
           autoComplete="current-password"
         />
         {error ? <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{error}</p> : null}
-        <button disabled={loading} className="mt-6 w-full rounded-md bg-navy px-4 py-3 text-sm font-semibold text-white hover:bg-ink disabled:opacity-60">
+        <button disabled={loading} className="mt-6 w-full rounded-md bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60">
           {loading ? "Signing in..." : "Sign in"}
         </button>
       </form>

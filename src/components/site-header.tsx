@@ -3,18 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 const nav = [
-  ["Research", "#research"],
-  ["Projects", "#projects"],
-  ["Patents", "#patents"],
-  ["Students", "#students"],
-  ["Goals", "#goals"],
-  ["Contact", "#contact"]
+  ["Home", "/"],
+  ["Lab", "/lab"],
+  ["Research", "/research"],
+  ["Projects", "/projects"],
+  ["Patents", "/patents"],
+  ["Students", "/students"],
+  ["Goals", "/goals"],
+  ["Teaching", "/teaching"],
+  ["Contact", "/contact"]
 ];
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -36,6 +41,12 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  const isActive = (href: string) => {
+    if (href === "/" && pathname === "/") return true;
+    if (href !== "/" && pathname.startsWith(href)) return true;
+    return false;
+  };
+
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -49,13 +60,19 @@ export function SiteHeader() {
           </Link>
           <nav className="ml-auto hidden items-center gap-1 lg:flex">
             {nav.map(([label, href]) => (
-              <a key={href} href={href} className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-ink">
+              <Link
+                key={href}
+                href={href}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition ${
+                  isActive(href)
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-700 hover:bg-slate-100 hover:text-ink"
+                }`}
+              >
                 {label}
-              </a>
+              </Link>
             ))}
-            <Link href="/admin" className="ml-2 rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-ink">
-              Admin
-            </Link>
+         
           </nav>
 
           <button
@@ -116,19 +133,23 @@ export function SiteHeader() {
             </div>
             <div className="mt-4 flex flex-col items-start gap-2">
               {nav.map(([label, href]) => (
-                <a
+                <Link
                   key={href}
                   href={href}
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-xl px-4 py-4 text-lg font-medium text-slate-800 transition hover:bg-slate-100"
+                  className={`w-full rounded-xl px-4 py-4 text-lg font-medium transition ${
+                    isActive(href)
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-800 hover:bg-slate-100"
+                  }`}
                 >
                   {label}
-                </a>
+                </Link>
               ))}
               <Link
                 href="/admin"
                 onClick={() => setMenuOpen(false)}
-                className="mt-4 w-full rounded-xl bg-navy px-4 py-4 text-lg font-semibold text-white transition hover:bg-ink text-center"
+                className="mt-4 w-full rounded-xl bg-blue-600 px-4 py-4 text-lg font-semibold text-white transition hover:bg-blue-700 text-center"
               >
                 Admin
               </Link>
