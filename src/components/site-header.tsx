@@ -146,13 +146,13 @@ export function SiteHeader() {
                   {label}
                 </Link>
               ))}
-              <Link
+              {/* <Link
                 href="/admin"
                 onClick={() => setMenuOpen(false)}
                 className="mt-4 w-full rounded-xl bg-blue-600 px-4 py-4 text-lg font-semibold text-white transition hover:bg-blue-700 text-center"
               >
                 Admin
-              </Link>
+              </Link> */}
             </div>
           </nav>
         </div>
