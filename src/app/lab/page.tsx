@@ -9,6 +9,8 @@ export const metadata = {
   description: "Explore RISHI Lab - RF Integrated Circuit and System Innovation Lab at IIT Roorkee."
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function LabPage() {
   const { research, students, projects, patents } = await getSiteContent();
 

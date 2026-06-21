@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -55,7 +56,7 @@ export async function getProjectPage(searchParams: SearchParams) {
     ];
   }
 
-  const orderBy =
+  const orderBy: Prisma.ProjectOrderByWithRelationInput[] =
     sort === "title"
       ? [{ title: "asc" }, { createdAt: "desc" }]
       : sort === "status"
@@ -106,7 +107,8 @@ export async function getResearchPage(searchParams: SearchParams) {
     ];
   }
 
-  const orderBy = sort === "title" ? [{ title: "asc" }] : [{ createdAt: "desc" }];
+  const orderBy: Prisma.ResearchOrderByWithRelationInput[] =
+    sort === "title" ? [{ title: "asc" }] : [{ createdAt: "desc" }];
   const total = await prisma.research.count({ where });
   const research = await prisma.research.findMany({
     where,
@@ -141,7 +143,8 @@ export async function getPatentPage(searchParams: SearchParams) {
     ];
   }
 
-  const orderBy = sort === "status" ? [{ status: "asc" }, { year: "desc" }] : [{ year: "desc" }];
+  const orderBy: Prisma.PatentOrderByWithRelationInput[] =
+    sort === "status" ? [{ status: "asc" }, { year: "desc" }] : [{ year: "desc" }];
   const total = await prisma.patent.count({ where });
   const patents = await prisma.patent.findMany({
     where,
@@ -177,7 +180,8 @@ export async function getStudentPage(searchParams: SearchParams) {
     ];
   }
 
-  const orderBy = sort === "program" ? [{ program: "asc" }, { name: "asc" }] : [{ name: "asc" }];
+  const orderBy: Prisma.StudentOrderByWithRelationInput[] =
+    sort === "program" ? [{ program: "asc" }, { name: "asc" }] : [{ name: "asc" }];
   const total = await prisma.student.count({ where });
   const students = await prisma.student.findMany({
     where,
@@ -213,7 +217,8 @@ export async function getGoalPage(searchParams: SearchParams) {
     ];
   }
 
-  const orderBy = sort === "category" ? [{ category: "asc" }] : [{ createdAt: "desc" }];
+  const orderBy: Prisma.GoalOrderByWithRelationInput[] =
+    sort === "category" ? [{ category: "asc" }] : [{ createdAt: "desc" }];
   const total = await prisma.goal.count({ where });
   const goals = await prisma.goal.findMany({
     where,
