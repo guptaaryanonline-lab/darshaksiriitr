@@ -37,7 +37,7 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
                     <Target className="h-6 w-6 text-cyan-600" />
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <span className="inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                    <span className="inline-block rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700">
                       {goal.status}
                     </span>
                     {goal.targetYear && (
@@ -77,7 +77,7 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
           <p className="mt-4 leading-7 text-slate-100">
             If our research goals align with your interests, we'd love to hear from you for potential collaborations and partnerships.
           </p>
-          <Link href="/contact" className="mt-6 inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+          <Link href="/contact" className="mt-6 inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-navy transition duration-150 hover:bg-slate-100 active:scale-[0.98]">
             Reach out to us
           </Link>
         </div>

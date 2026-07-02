@@ -92,10 +92,10 @@ export default async function LabPage() {
 
         <div className="grid gap-6 md:grid-cols-2">
           {research.map((area) => (
-            <article key={area.id} className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm hover:shadow-md transition">
+            <article key={area.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md sm:p-8">
               <div className="flex items-start gap-4">
-                <div className="rounded-lg bg-blue-50 p-3 flex-shrink-0">
-                  <Radio className="h-6 w-6 text-blue-600" />
+                <div className="flex-shrink-0 rounded-lg bg-navy/10 p-3">
+                  <Radio className="h-6 w-6 text-navy" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-semibold text-ink">{area.title}</h3>
@@ -116,7 +116,7 @@ export default async function LabPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link href="/research" className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+          <Link href="/research" className="btn-primary">
             Explore all research areas
           </Link>
         </div>
@@ -136,10 +136,10 @@ export default async function LabPage() {
           {facilities.map((facility) => {
             const Icon = facility.icon;
             return (
-              <article key={facility.title} className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm hover:shadow-md transition">
+              <article key={facility.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md sm:p-8">
                 <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-purple-50 p-3 flex-shrink-0">
-                    <Icon className="h-6 w-6 text-purple-600" />
+                  <div className="flex-shrink-0 rounded-lg bg-teal/10 p-3">
+                    <Icon className="h-6 w-6 text-teal" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-ink">{facility.title}</h3>
@@ -166,8 +166,8 @@ export default async function LabPage() {
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-                      <Users className="h-5 w-5 text-blue-600" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-navy/10">
+                      <Users className="h-5 w-5 text-navy" />
                     </div>
                   </div>
                   <div>
@@ -178,8 +178,8 @@ export default async function LabPage() {
 
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-                      <Lightbulb className="h-5 w-5 text-green-600" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal/10">
+                      <Lightbulb className="h-5 w-5 text-teal" />
                     </div>
                   </div>
                   <div>
@@ -190,8 +190,8 @@ export default async function LabPage() {
 
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
-                      <BookOpen className="h-5 w-5 text-purple-600" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-100">
+                      <BookOpen className="h-5 w-5 text-cyan-700" />
                     </div>
                   </div>
                   <div>
@@ -202,8 +202,8 @@ export default async function LabPage() {
 
                 <div className="flex gap-4">
                   <div className="flex-shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
-                      <Award className="h-5 w-5 text-amber-600" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gold/10">
+                      <Award className="h-5 w-5 text-gold" />
                     </div>
                   </div>
                   <div>
@@ -254,41 +254,38 @@ export default async function LabPage() {
 
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           <article className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-7">
-            <div className="inline-block rounded-lg bg-blue-50 p-3 mb-4">
-              <Zap className="h-6 w-6 text-blue-600" />
+            <div className="mb-4 inline-block rounded-lg bg-navy/10 p-3">
+              <Zap className="h-6 w-6 text-navy" />
             </div>
             <h3 className="text-lg font-semibold text-ink">PhD Program</h3>
-            <p className="mt-2 leading-6 text-slate-700 text-sm">
+            <p className="mt-2 text-sm leading-6 text-slate-700">
               Pursue doctoral research in RF microelectronics, analog circuits, or quantum applications. Full funding available for eligible candidates.
             </p>
           </article>
 
           <article className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-7">
-            <div className="inline-block rounded-lg bg-green-50 p-3 mb-4">
-              <BookOpen className="h-6 w-6 text-green-600" />
+            <div className="mb-4 inline-block rounded-lg bg-teal/10 p-3">
+              <BookOpen className="h-6 w-6 text-teal" />
             </div>
             <h3 className="text-lg font-semibold text-ink">M.Tech Projects</h3>
-            <p className="mt-2 leading-6 text-slate-700 text-sm">
+            <p className="mt-2 text-sm leading-6 text-slate-700">
               Engage in semester-long or year-long projects with direct supervision. Multiple research tracks available.
             </p>
           </article>
 
           <article className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-7">
-            <div className="inline-block rounded-lg bg-purple-50 p-3 mb-4">
-              <Users className="h-6 w-6 text-purple-600" />
+            <div className="mb-4 inline-block rounded-lg bg-gold/10 p-3">
+              <Users className="h-6 w-6 text-gold" />
             </div>
             <h3 className="text-lg font-semibold text-ink">Internships</h3>
-            <p className="mt-2 leading-6 text-slate-700 text-sm">
+            <p className="mt-2 text-sm leading-6 text-slate-700">
               Gain hands-on experience with a 2-3 month intensive internship in RF design and characterization.
             </p>
           </article>
         </div>
 
-        <a
-          href="mailto:darshak.bhatt@ece.iitr.ac.in"
-          className="mt-8 inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-        >
-          Contact to Join RISHI Lab
+        <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="btn-primary mt-8">
+          Contact to join RISHI Lab
         </a>
       </section>
 

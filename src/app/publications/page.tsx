@@ -63,7 +63,7 @@ export default async function PublicationsPage({
             href="https://scholar.google.com/citations?hl=en&user=XOKWdPAAAAAJ"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-block text-navy hover:text-ink font-semibold"
+            className="mt-6 inline-block cursor-pointer font-semibold text-navy transition duration-150 hover:text-ink"
           >
             View Google Scholar Profile →
           </a>
@@ -79,9 +79,9 @@ export default async function PublicationsPage({
               <div className="flex flex-wrap gap-2">
                 <a
                   href="/publications"
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition duration-150 ${
                     !data.year
-                      ? "bg-blue-600 text-white"
+                      ? "bg-navy text-white"
                       : "border border-slate-300 text-slate-700 hover:bg-slate-50"
                   }`}
                 >
@@ -91,9 +91,9 @@ export default async function PublicationsPage({
                   <a
                     key={y}
                     href={getFilterUrl("year", String(y))}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                    className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition duration-150 ${
                       data.year === String(y)
-                        ? "bg-blue-600 text-white"
+                        ? "bg-navy text-white"
                         : "border border-slate-300 text-slate-700 hover:bg-slate-50"
                     }`}
                   >
@@ -108,9 +108,9 @@ export default async function PublicationsPage({
               <div className="flex flex-wrap gap-2">
                 <a
                   href={data.year ? `/publications?year=${data.year}` : "/publications"}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition duration-150 ${
                     !data.type || data.type === "All"
-                      ? "bg-blue-600 text-white"
+                      ? "bg-navy text-white"
                       : "border border-slate-300 text-slate-700 hover:bg-slate-50"
                   }`}
                 >
@@ -120,9 +120,9 @@ export default async function PublicationsPage({
                   <a
                     key={t}
                     href={getFilterUrl("type", t)}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                    className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition duration-150 ${
                       data.type === t
-                        ? "bg-blue-600 text-white"
+                        ? "bg-navy text-white"
                         : "border border-slate-300 text-slate-700 hover:bg-slate-50"
                     }`}
                   >
@@ -182,7 +182,7 @@ export default async function PublicationsPage({
                                     href={`https://doi.org/${pub.doi}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-navy hover:text-ink transition"
+                                    className="mt-3 inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-navy transition duration-150 hover:text-ink"
                                   >
                                     DOI: {pub.doi}
                                     <ExternalLink className="h-3 w-3" />

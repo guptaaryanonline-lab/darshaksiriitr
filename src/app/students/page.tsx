@@ -74,7 +74,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Rec
                   {student.email && (
                     <a
                       href={`mailto:${student.email}`}
-                      className="mt-4 inline-flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 transition w-fit"
+                      className="mt-4 inline-flex w-fit cursor-pointer items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 transition duration-150 hover:bg-slate-100"
                     >
                       <Mail className="h-4 w-4" />
                       Contact
@@ -106,7 +106,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: Rec
           <p className="mt-4 leading-7 text-slate-300">
             We are always looking for motivated students interested in RF microelectronics, circuit design, and advanced research. Explore opportunities to work with us.
           </p>
-          <Link href="/contact" className="mt-6 inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+          <Link href="/contact" className="btn-primary mt-6">
             Get in touch
           </Link>
         </div>

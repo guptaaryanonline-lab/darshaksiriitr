@@ -86,7 +86,7 @@ export default function TeachingPage() {
                   <p className="mb-2 text-sm font-semibold text-slate-600">Key Topics:</p>
                   <div className="flex flex-wrap gap-2">
                     {course.topics.map((topic) => (
-                      <span key={topic} className="rounded bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+                      <span key={topic} className="rounded-md bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
                         {topic}
                       </span>
                     ))}
@@ -113,29 +113,35 @@ export default function TeachingPage() {
         </section>
 
         <section className="mt-6 grid gap-5 md:grid-cols-2">
-          <article className="rounded-lg border border-blue-200 bg-blue-50 p-6">
+          <article className="rounded-lg border border-slate-200 bg-slate-50 p-6">
             <h3 className="font-semibold text-ink">For Prospective PhD Students</h3>
             <p className="mt-3 leading-7 text-slate-700">
               I welcome applications from motivated students with strong backgrounds in electronics, microwave engineering, or RF design. Familiarity with circuit simulation tools
               (Cadence, ADS) is advantageous.
             </p>
-            <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="mt-4 inline-block text-sm font-semibold text-blue-600 hover:underline">
-              Contact for PhD Opportunities
+            <a
+              href="mailto:darshak.bhatt@ece.iitr.ac.in"
+              className="mt-4 inline-block cursor-pointer text-sm font-semibold text-navy transition duration-150 hover:text-ink hover:underline"
+            >
+              Contact for PhD opportunities
             </a>
           </article>
 
-          <article className="rounded-lg border border-green-200 bg-green-50 p-6">
+          <article className="rounded-lg border border-slate-200 bg-slate-50 p-6">
             <h3 className="font-semibold text-ink">For B.Tech/M.Tech Projects</h3>
             <p className="mt-3 leading-7 text-slate-700">
               IIT Roorkee students interested in pursuing projects related to RF/analog IC design are encouraged to reach out. Projects range from circuit design to system-level implementations.
             </p>
-            <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="mt-4 inline-block text-sm font-semibold text-blue-600 hover:underline">
-              Inquire About Project Topics
+            <a
+              href="mailto:darshak.bhatt@ece.iitr.ac.in"
+              className="mt-4 inline-block cursor-pointer text-sm font-semibold text-navy transition duration-150 hover:text-ink hover:underline"
+            >
+              Inquire about project topics
             </a>
           </article>
         </section>
 
-        <section className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-6 sm:p-8">
+        <section className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-6 sm:p-8">
           <h2 className="text-xl font-semibold text-ink">Teaching Resources</h2>
           <p className="mt-4 leading-7 text-slate-700">
             Course materials, lecture notes, and assignments are made available to enrolled students through the IIT Roorkee academic portal.
@@ -149,7 +155,7 @@ export default function TeachingPage() {
       </section>
 
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-sm text-slate-500">
-        <p>© 2026 Dr. Darshak Bhatt. All rights reserved.</p>
+        <p>© 2026 Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
       </footer>
     </main>
   );

@@ -85,10 +85,10 @@ export default async function ResearchPage({ searchParams }: { searchParams: Rec
             Explore our projects and publications to see how these research areas translate into real-world impact.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link href="/projects" className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+            <Link href="/projects" className="btn-primary">
               View projects
             </Link>
-            <Link href="/contact" className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+            <Link href="/contact" className="btn-secondary">
               Contact us
             </Link>
           </div>

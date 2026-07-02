@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, MapPin, Radio, Target, Users } from "lucide-react";
+import { Radio } from "lucide-react";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { SiteHeader } from "@/components/site-header";
 import { asStringArray, getSiteContent } from "@/lib/content";
@@ -9,27 +9,26 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const { projects, research, patents, students, goals } = await getSiteContent();
-  const activeProjects = projects.filter((project) => project.status.toLowerCase() === "active").length;
 
   return (
     <main>
       <SiteHeader />
 
-      <section className="relative flex min-h-[calc(100vh-73px)] items-center overflow-hidden">
+      <section className="relative flex min-h-[calc(100vh-65px)] items-center overflow-hidden">
         <HeroCarousel />
-        <div className="relative mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:px-10">
+        <div className="relative mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-24 lg:px-10">
           <div className="max-w-3xl text-white">
-            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-cyan-200">RISHI Lab, IIT Roorkee</p>
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-cyan-100">RISHI Lab, IIT Roorkee</p>
             <h1 className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">Dr. Darshak Bhatt</h1>
-            <p className="mt-5 text-lg sm:text-xl text-white/90">Associate Professor, Electronics and Communication Engineering</p>
-            <p className="mt-5 max-w-2xl text-base sm:text-lg leading-8 text-white/82">
+            <p className="mt-5 text-lg text-white sm:text-xl">Associate Professor, Electronics and Communication Engineering</p>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-white/90 sm:text-lg">
               Advancing RF microelectronics and analog circuit design for wireless, quantum, and sub-THz applications.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <a href="#projects" className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+              <a href="#research" className="btn-primary">
                 View Research
               </a>
-              <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+              <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="btn-secondary !border-white/40 !bg-white/10 !text-white hover:!bg-white/20">
                 Contact
               </a>
             </div>
@@ -51,19 +50,13 @@ export default async function HomePage() {
               and student training for emerging wireless and quantum technologies.
             </p>
           </div>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <a
-              href="mailto:darshak.bhatt@ece.iitr.ac.in"
-              className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-            >
-              Contact Me
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="btn-primary">
+              Contact me
             </a>
-            <a
-              href="#"
-              className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-            >
+            <Link href="/contact" className="btn-secondary">
               Download CV
-            </a>
+            </Link>
           </div>
         </div>
         <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-slate-200 shadow-soft">
@@ -115,7 +108,7 @@ export default async function HomePage() {
             ))}
           </div>
           <div className="mt-8 flex justify-center">
-            <Link href="/research" className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+            <Link href="/research" className="btn-primary">
               Explore all research
             </Link>
           </div>
@@ -174,7 +167,7 @@ export default async function HomePage() {
           ))}
         </div>
         <div className="mt-8 flex justify-center">
-          <Link href="/projects" className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+          <Link href="/projects" className="btn-primary">
             Explore all projects
           </Link>
         </div>
@@ -210,18 +203,21 @@ export default async function HomePage() {
       </section>
 
       <section className="section-shell">
-        <div className="rounded-[2rem] bg-gradient-to-r from-navy to-cyan-600 px-8 py-12 text-white shadow-soft">
+        <div className="rounded-[2rem] bg-gradient-to-r from-navy to-cyan-700 px-6 py-10 text-white shadow-soft sm:px-10 sm:py-14">
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-200">Connect</p>
-            <h2 className="mt-4 text-3xl font-semibold">Interested in collaboration or student projects?</h2>
-            <p className="mt-4 leading-7 text-slate-100/90">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-100">Connect</p>
+            <h2 className="mt-4 text-2xl font-semibold sm:text-3xl">Interested in collaboration or student projects?</h2>
+            <p className="mt-4 leading-7 text-white/90">
               Reach out to discuss research partnerships, PhD/M.Tech projects, lab visits, or industry-sponsored work.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/contact" className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+              <Link href="/contact" className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-navy transition duration-150 hover:bg-slate-100 active:scale-[0.98]">
                 Contact the lab
               </Link>
-              <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+              <a
+                href="mailto:darshak.bhatt@ece.iitr.ac.in"
+                className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-white/40 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition duration-150 hover:bg-white/20 active:scale-[0.98]"
+              >
                 Email directly
               </a>
             </div>
@@ -236,40 +232,11 @@ export default async function HomePage() {
   );
 }
 
-function Metric({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <p className="text-3xl font-semibold text-navy">{value}</p>
-      <p className="mt-1 text-sm font-medium text-slate-600">{label}</p>
-    </div>
-  );
-}
-
 function SectionTitle({ eyebrow, title, dark = false }: { eyebrow: string; title: string; dark?: boolean }) {
   return (
     <div className="max-w-3xl">
       <p className={dark ? "text-sm font-semibold uppercase tracking-[0.14em] text-cyan-200" : "eyebrow"}>{eyebrow}</p>
       <h2 className={`mt-3 text-3xl font-semibold sm:text-4xl ${dark ? "text-white" : "text-ink"}`}>{title}</h2>
     </div>
-  );
-}
-
-function ContactItem({ icon, label, value, href }: { icon?: React.ReactNode; label: string; value: string; href?: string }) {
-  const body = (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-      <div className="flex items-center gap-2 text-sm font-semibold text-slate-500">
-        {icon}
-        {label}
-      </div>
-      <p className="mt-2 font-semibold text-ink">{value}</p>
-    </div>
-  );
-
-  return href ? (
-    <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" className="block hover:opacity-90">
-      {body}
-    </a>
-  ) : (
-    body
   );
 }

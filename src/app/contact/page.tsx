@@ -21,20 +21,23 @@ export default function ContactPage() {
         </div>
 
         <div className="mt-12 grid gap-8 lg:grid-cols-3">
-          <article className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm hover:shadow-md transition">
-            <div className="rounded-lg bg-blue-50 w-fit p-3 mb-4">
-              <Mail className="h-6 w-6 text-blue-600" />
+          <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md sm:p-8">
+            <div className="mb-4 w-fit rounded-lg bg-navy/10 p-3">
+              <Mail className="h-6 w-6 text-navy" />
             </div>
             <h3 className="text-lg font-semibold text-ink">Email</h3>
             <p className="mt-2 leading-7 text-slate-700">For general inquiries and research collaboration</p>
-            <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="mt-4 inline-block font-semibold text-navy hover:text-ink">
+            <a
+              href="mailto:darshak.bhatt@ece.iitr.ac.in"
+              className="mt-4 inline-block cursor-pointer font-semibold text-navy transition duration-150 hover:text-ink"
+            >
               darshak.bhatt@ece.iitr.ac.in
             </a>
           </article>
 
-          <article className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm hover:shadow-md transition">
-            <div className="rounded-lg bg-cyan-50 w-fit p-3 mb-4">
-              <MapPin className="h-6 w-6 text-cyan-600" />
+          <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md sm:p-8">
+            <div className="mb-4 w-fit rounded-lg bg-teal/10 p-3">
+              <MapPin className="h-6 w-6 text-teal" />
             </div>
             <h3 className="text-lg font-semibold text-ink">Address</h3>
             <p className="mt-2 leading-7 text-slate-700">
@@ -42,13 +45,18 @@ export default function ContactPage() {
             </p>
           </article>
 
-          <article className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm hover:shadow-md transition">
-            <div className="rounded-lg bg-purple-50 w-fit p-3 mb-4">
-              <Linkedin className="h-6 w-6 text-purple-600" />
+          <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md sm:p-8">
+            <div className="mb-4 w-fit rounded-lg bg-gold/10 p-3">
+              <Linkedin className="h-6 w-6 text-gold" />
             </div>
-            <h3 className="text-lg font-semibold text-ink">Connect Online</h3>
+            <h3 className="text-lg font-semibold text-ink">Connect online</h3>
             <p className="mt-2 leading-7 text-slate-700">Follow our work and connect on professional networks</p>
-            <a href="https://scholar.google.com/citations?hl=en&user=XOKWdPAAAAAJ" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block font-semibold text-navy hover:text-ink">
+            <a
+              href="https://scholar.google.com/citations?hl=en&user=XOKWdPAAAAAJ"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-block cursor-pointer font-semibold text-navy transition duration-150 hover:text-ink"
+            >
               Google Scholar
             </a>
           </article>
@@ -97,7 +105,7 @@ export default function ContactPage() {
             href="https://iitr.ac.in"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="btn-primary mt-6"
           >
             Visit IIT Roorkee
           </a>
@@ -110,7 +118,10 @@ export default function ContactPage() {
           <p className="mt-3 leading-7 text-slate-100">
             Drop us an email or visit our lab. We're excited to discuss collaborations, research partnerships, and student projects.
           </p>
-          <a href="mailto:darshak.bhatt@ece.iitr.ac.in" className="mt-6 inline-block rounded bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
+          <a
+            href="mailto:darshak.bhatt@ece.iitr.ac.in"
+            className="mt-6 inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-navy transition duration-150 hover:bg-slate-100 active:scale-[0.98]"
+          >
             Send an Email
           </a>
         </div>

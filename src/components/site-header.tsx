@@ -63,16 +63,15 @@ export function SiteHeader() {
               <Link
                 key={href}
                 href={href}
-                className={`rounded-md px-3 py-2 text-sm font-medium transition ${
+                className={`cursor-pointer rounded-lg px-3 py-2 text-sm font-medium transition duration-150 ${
                   isActive(href)
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-700 hover:bg-slate-100 hover:text-ink"
+                    ? "bg-navy text-white"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-ink"
                 }`}
               >
                 {label}
               </Link>
             ))}
-         
           </nav>
 
           <button
@@ -80,7 +79,7 @@ export function SiteHeader() {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-            className="ml-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 lg:hidden"
+            className="ml-auto inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition duration-150 hover:bg-slate-50 lg:hidden"
           >
             {!menuOpen ? (
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-700">
@@ -116,13 +115,13 @@ export function SiteHeader() {
       {menuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMenuOpen(false)} />
-          <nav className="absolute inset-0 z-10 flex flex-col gap-4 bg-white p-6 pt-5 overflow-y-auto">
+          <nav className="absolute inset-0 z-10 flex flex-col gap-4 overflow-y-auto bg-white p-6 pt-5">
             <div className="flex items-center justify-between border-b border-slate-200 pb-4">
               <span className="text-lg font-semibold text-ink">Menu</span>
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50"
+                className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition duration-150 hover:bg-slate-50"
                 aria-label="Close navigation menu"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -131,28 +130,21 @@ export function SiteHeader() {
                 </svg>
               </button>
             </div>
-            <div className="mt-4 flex flex-col items-start gap-2">
+            <div className="mt-4 flex flex-col items-start gap-1.5">
               {nav.map(([label, href]) => (
                 <Link
                   key={href}
                   href={href}
                   onClick={() => setMenuOpen(false)}
-                  className={`w-full rounded-xl px-4 py-4 text-lg font-medium transition ${
+                  className={`w-full cursor-pointer rounded-xl px-4 py-3.5 text-base font-medium transition duration-150 ${
                     isActive(href)
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-800 hover:bg-slate-100"
+                      ? "bg-navy text-white"
+                      : "text-slate-700 hover:bg-slate-100"
                   }`}
                 >
                   {label}
                 </Link>
               ))}
-              {/* <Link
-                href="/admin"
-                onClick={() => setMenuOpen(false)}
-                className="mt-4 w-full rounded-xl bg-blue-600 px-4 py-4 text-lg font-semibold text-white transition hover:bg-blue-700 text-center"
-              >
-                Admin
-              </Link> */}
             </div>
           </nav>
         </div>

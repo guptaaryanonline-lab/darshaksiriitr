@@ -72,7 +72,7 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
         {hasActiveFilters && (
           <button
             onClick={clearAll}
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-700 transition duration-150 hover:bg-slate-50"
           >
             <X className="h-4 w-4" />
             Clear all
@@ -87,7 +87,7 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
               <select
                 value={searchParams.get(filter.key) || ""}
                 onChange={(e) => handleFilter(filter.key, e.target.value)}
-                className="focus-ring rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700"
+                className="focus-ring cursor-pointer rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700"
               >
                 <option value="">{filter.label}</option>
                 {filter.options.map((opt) => (
@@ -104,7 +104,7 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
               <select
                 value={searchParams.get("sort") || ""}
                 onChange={(e) => handleSort(e.target.value)}
-                className="focus-ring rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700"
+                className="focus-ring cursor-pointer rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700"
               >
                 <option value="">Sort by</option>
                 {sortOptions.map((opt) => (
