@@ -84,7 +84,7 @@ export default async function ResearchPage({ searchParams }: { searchParams: Rec
           <p className="mt-3 leading-7 text-slate-700">
             Explore our projects and publications to see how these research areas translate into real-world impact.
           </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
             <Link href="/projects" className="btn-primary">
               View projects
             </Link>

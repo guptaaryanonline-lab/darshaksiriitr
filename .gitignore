@@ -6,5 +6,4 @@ guidelines
 .next/
 tsconfig.tsbuildinfo
 prisma/dev.db
-dist
 .next
