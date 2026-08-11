@@ -27,6 +27,7 @@ async function main() {
   await prisma.patent.deleteMany();
   await prisma.student.deleteMany();
   await prisma.goal.deleteMany();
+  await prisma.course.deleteMany();
 
   await prisma.project.createMany({
     data: [
@@ -115,6 +116,7 @@ async function main() {
         program: "PhD",
         topic: "Cryogenic RFIC for quantum systems",
         status: "Current",
+        category: "Current",
         sortOrder: 1
       },
       {
@@ -122,7 +124,24 @@ async function main() {
         program: "M.Tech",
         topic: "N-path receiver design",
         status: "Current",
+        category: "Current",
         sortOrder: 2
+      },
+      {
+        name: "RISHI Lab Alumnus",
+        program: "PhD",
+        topic: "Q-band mixer design for 5G front ends",
+        status: "Graduated",
+        category: "Placed",
+        sortOrder: 3
+      },
+      {
+        name: "M.Tech Alumnus",
+        program: "M.Tech",
+        topic: "Low-noise amplifier design for wideband receivers",
+        status: "Graduated",
+        category: "Placed",
+        sortOrder: 4
       }
     ]
   });
@@ -144,6 +163,50 @@ async function main() {
         targetYear: "2028",
         status: "Planned",
         sortOrder: 2
+      },
+      {
+        title: "Grow research collaboration with academia and industry",
+        category: "Research Collaboration",
+        description: "Establish joint research programs with national labs, industry partners, and international universities to expand RFIC and quantum RF research.",
+        targetYear: "2027",
+        status: "Active",
+        sortOrder: 3
+      }
+    ]
+  });
+
+  await prisma.course.createMany({
+    data: [
+      {
+        code: "ECN-554",
+        title: "Microwave and Millimeter Wave Circuits",
+        term: "Autumn Semester",
+        level: "Postgraduate",
+        description:
+          "Advanced course covering microwave and mm-wave circuit design principles, transmission line theory, S-parameters, matching networks, and active/passive microwave components.",
+        topics:
+          "Transmission Line Theory\nS-Parameter Analysis\nMicrowave Amplifier Design\nOscillator Design\nMixer and Frequency Converter Design",
+        sortOrder: 1
+      },
+      {
+        code: "ECN-333",
+        title: "Microwave Engineering",
+        term: "Spring Semester",
+        level: "Undergraduate",
+        description:
+          "Fundamental course introducing students to microwave theory and applications, covering waveguides, resonators, microwave networks, and basic microwave components.",
+        topics: "Maxwell's Equations for Microwaves\nWaveguide Theory\nMicrowave Network Analysis\nCavity Resonators\nMicrowave Measurements",
+        sortOrder: 2
+      },
+      {
+        code: "ECN-556",
+        title: "RF System Design and Analysis",
+        term: "Spring Semester",
+        level: "Postgraduate",
+        description:
+          "Comprehensive course on RF system design covering receiver and transmitter architectures, link budget analysis, noise figure calculations, and nonlinear system analysis.",
+        topics: "Receiver Architectures\nTransmitter Design\nLink Budget Analysis\nNoise and Linearity in RF Systems\nRF System Specifications",
+        sortOrder: 3
       }
     ]
   });

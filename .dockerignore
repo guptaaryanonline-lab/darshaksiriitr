@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.gitignore
+*.md
+.env
+.env.*
+!.env.production.example
+Dockerfile
+docker-compose*.yml
+docker/nginx/certs
+prisma/dev.db
+npm-debug.log*
+.DS_Store
+.vscode
+.idea

@@ -26,6 +26,8 @@ function updateItem(resource: ResourceName, id: string, data: Record<string, unk
       return prisma.student.update({ where: { id }, data: updateData });
     case "goals":
       return prisma.goal.update({ where: { id }, data: updateData });
+    case "courses":
+      return prisma.course.update({ where: { id }, data: updateData });
   }
 }
 
@@ -41,6 +43,8 @@ function deleteItem(resource: ResourceName, id: string) {
       return prisma.student.delete({ where: { id } });
     case "goals":
       return prisma.goal.delete({ where: { id } });
+    case "courses":
+      return prisma.course.delete({ where: { id } });
   }
 }
 
@@ -54,6 +58,7 @@ function normalize(resource: ResourceName, body: Record<string, unknown>) {
   if ("publications" in base) base.publications = Number(base.publications) || 0;
   if (resource === "projects") base.objectives = parseList(base.objectives);
   if (resource === "research") base.topics = parseList(base.topics);
+  if (resource === "courses") base.topics = parseList(base.topics);
   return base;
 }
 

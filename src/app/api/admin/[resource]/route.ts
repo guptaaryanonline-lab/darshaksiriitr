@@ -26,6 +26,8 @@ function findMany(resource: ResourceName) {
       return prisma.student.findMany({ orderBy });
     case "goals":
       return prisma.goal.findMany({ orderBy });
+    case "courses":
+      return prisma.course.findMany({ orderBy });
   }
 }
 
@@ -42,6 +44,8 @@ function createItem(resource: ResourceName, data: Record<string, unknown>) {
       return prisma.student.create({ data: createData });
     case "goals":
       return prisma.goal.create({ data: createData });
+    case "courses":
+      return prisma.course.create({ data: createData });
   }
 }
 
@@ -52,6 +56,7 @@ function normalize(resource: ResourceName, body: Record<string, unknown>) {
   if ("publications" in base) base.publications = Number(base.publications) || 0;
   if (resource === "projects") base.objectives = parseList(base.objectives);
   if (resource === "research") base.topics = parseList(base.topics);
+  if (resource === "courses") base.topics = parseList(base.topics);
   return base;
 }
 

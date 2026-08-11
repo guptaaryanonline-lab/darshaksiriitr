@@ -59,6 +59,7 @@ model Student {
   program     String
   topic       String
   status      String
+  category    String   @default("Current")
   email       String?
   image       String?
   sortOrder   Int      @default(0)
@@ -73,6 +74,19 @@ model Goal {
   description String
   targetYear  String?
   status      String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  code        String
+  title       String
+  term        String
+  level       String
+  description String
+  topics      String
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
