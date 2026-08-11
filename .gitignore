@@ -3,6 +3,7 @@ guidelines
 .env
 .env.local
 .env*.local
+.env.production
 .next/
 tsconfig.tsbuildinfo
 prisma/dev.db

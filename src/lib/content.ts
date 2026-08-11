@@ -16,15 +16,16 @@ function getIntParam(params: SearchParams, key: string, fallback: number) {
 }
 
 export async function getSiteContent() {
-  const [projects, research, patents, students, goals] = await Promise.all([
+  const [projects, research, patents, students, goals, courses] = await Promise.all([
     prisma.project.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] }),
     prisma.research.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] }),
     prisma.patent.findMany({ orderBy: [{ sortOrder: "asc" }, { year: "desc" }] }),
     prisma.student.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] }),
-    prisma.goal.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] })
+    prisma.goal.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] }),
+    prisma.course.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] })
   ]);
 
-  return { projects, research, patents, students, goals };
+  return { projects, research, patents, students, goals, courses };
 }
 
 export function asStringArray(value: unknown) {
@@ -205,9 +206,13 @@ export async function getGoalPage(searchParams: SearchParams) {
   const page = getIntParam(searchParams, "page", 1);
   const perPage = getIntParam(searchParams, "perPage", 6);
   const query = getParam(searchParams, "query");
+  const category = getParam(searchParams, "category");
   const sort = getParam(searchParams, "sort") || "recent";
 
   const where: any = {};
+  if (category) {
+    where.category = { equals: category };
+  }
   if (query) {
     where.OR = [
       { title: { contains: query, mode: "insensitive" } },
@@ -220,6 +225,11 @@ export async function getGoalPage(searchParams: SearchParams) {
   const orderBy: Prisma.GoalOrderByWithRelationInput[] =
     sort === "category" ? [{ category: "asc" }] : [{ createdAt: "desc" }];
   const total = await prisma.goal.count({ where });
+  const categoryOptions = await prisma.goal.findMany({
+    distinct: ["category"],
+    select: { category: true },
+    orderBy: [{ category: "asc" }]
+  });
   const goals = await prisma.goal.findMany({
     where,
     orderBy,
@@ -229,6 +239,64 @@ export async function getGoalPage(searchParams: SearchParams) {
 
   return {
     goals,
+    total,
+    page,
+    perPage,
+    totalPages: Math.max(1, Math.ceil(total / perPage)),
+    query,
+    category,
+    sort,
+    categoryOptions: categoryOptions.map((item) => item.category)
+  };
+}
+
+export async function getStudentGroups() {
+  const [current, placed] = await Promise.all([
+    prisma.student.findMany({
+      where: { category: "Current" },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }]
+    }),
+    prisma.student.findMany({
+      where: { category: "Placed" },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }]
+    })
+  ]);
+
+  return { current, placed };
+}
+
+export async function getCoursePage(searchParams: SearchParams) {
+  const page = getIntParam(searchParams, "page", 1);
+  const perPage = getIntParam(searchParams, "perPage", 6);
+  const query = getParam(searchParams, "query");
+  const sort = getParam(searchParams, "sort") || "recent";
+
+  const where: any = {};
+  if (query) {
+    where.OR = [
+      { code: { contains: query, mode: "insensitive" } },
+      { title: { contains: query, mode: "insensitive" } },
+      { description: { contains: query, mode: "insensitive" } },
+      { topics: { contains: query, mode: "insensitive" } },
+      { level: { contains: query, mode: "insensitive" } }
+    ];
+  }
+
+  const orderBy: Prisma.CourseOrderByWithRelationInput[] =
+    sort === "title"
+      ? [{ title: "asc" }]
+      : [{ sortOrder: "asc" }, { createdAt: "desc" }];
+
+  const total = await prisma.course.count({ where });
+  const courses = await prisma.course.findMany({
+    where,
+    orderBy,
+    skip: (page - 1) * perPage,
+    take: perPage
+  });
+
+  return {
+    courses,
     total,
     page,
     perPage,

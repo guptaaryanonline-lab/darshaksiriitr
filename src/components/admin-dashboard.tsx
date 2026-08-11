@@ -54,6 +54,7 @@ const emptyItem: Record<ResourceName, Item> = {
     program: "",
     topic: "",
     status: "Current",
+    category: "Current",
     email: "",
     image: "",
     sortOrder: 0,
@@ -64,6 +65,15 @@ const emptyItem: Record<ResourceName, Item> = {
     description: "",
     targetYear: "",
     status: "Active",
+    sortOrder: 0,
+  },
+  courses: {
+    code: "",
+    title: "",
+    term: "",
+    level: "",
+    description: "",
+    topics: "",
     sortOrder: 0,
   },
 };
@@ -130,7 +140,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
   }
 
   function validateDraft(resource: ResourceName, draft: Item) {
-    const requiredFields = new Set(["title", "name", "status", "description", "program", "topic", "email", "year", "category", "targetYear"]);
+    const requiredFields = new Set(["title", "name", "status", "description", "program", "topic", "email", "year", "category", "targetYear", "code", "term", "level"]);
     const missing = [] as string[];
 
     for (const field of resources[resource].fields) {
@@ -445,7 +455,8 @@ function FieldInput({ field, value, onChange, active }: { field: string; value: 
   const label = field.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase());
   const normalized = Array.isArray(value) ? value.join("\n") : String(value ?? "");
   const isStatusSelect = active === "projects" && field === "status";
-  const requiredFields = new Set(["title", "status", "description", "name", "program", "topic", "email", "year", "category", "targetYear"]);
+  const isCategorySelect = active === "students" && field === "category";
+  const requiredFields = new Set(["title", "status", "description", "name", "program", "topic", "email", "year", "category", "targetYear", "code", "term", "level"]);
   const isRequired = requiredFields.has(field) && !["image", "link", "objectives", "publications", "impact", "sortOrder"].includes(field);
   const isImageField = field === "image";
 
@@ -481,6 +492,16 @@ function FieldInput({ field, value, onChange, active }: { field: string; value: 
           <option>In Progress</option>
           <option>Published</option>
           <option>Completed</option>
+        </select>
+      ) : isCategorySelect ? (
+        <select
+          value={normalized}
+          onChange={(event) => onChange(event.target.value)}
+          className="focus-ring mt-2 w-full cursor-pointer rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          required={isRequired}
+        >
+          <option>Current</option>
+          <option>Placed</option>
         </select>
       ) : (
         <input

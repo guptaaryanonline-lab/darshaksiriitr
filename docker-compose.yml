@@ -1,0 +1,127 @@
+name: darshak-bhatt
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-app}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+        reservations:
+          memory: 256m
+    # Not published to the host on purpose — only reachable from other
+    # containers on the internal "backend" network.
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: darshak-bhatt-web:latest
+    container_name: app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@db:5432/${POSTGRES_DB:-app}?schema=public
+      AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET is required}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
+      RUN_SEED_ON_BOOT: ${RUN_SEED_ON_BOOT:-false}
+    volumes:
+      # Uploaded images (from /api/admin/upload) are written to disk here.
+      # This volume is what makes uploaded images survive container
+      # restarts/rebuilds — without it, uploads would live only in the
+      # container's writable layer and vanish on `docker compose up` again.
+      - app-uploads:/app/public/uploads
+    networks:
+      - backend
+      - frontend
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(r.status!==200)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1.5g
+        reservations:
+          memory: 256m
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: nginx
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - nginx-certs:/etc/nginx/certs:ro
+      - certbot-webroot:/var/www/certbot:ro
+    networks:
+      - frontend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256m
+
+networks:
+  # Internet-facing side: only nginx and the app live here.
+  frontend:
+    driver: bridge
+  # Private side: only the app can reach the database. Postgres has no
+  # published host port, so it is unreachable from outside the Docker host.
+  backend:
+    driver: bridge
+    internal: false
+
+volumes:
+  db-data:
+    name: darshak-bhatt-db-data
+  app-uploads:
+    name: darshak-bhatt-app-uploads
+  nginx-certs:
+    name: darshak-bhatt-nginx-certs
+  certbot-webroot:
+    name: darshak-bhatt-certbot-webroot

@@ -2,7 +2,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
 import { getGoalPage } from "@/lib/content";
-import { Target, Calendar } from "lucide-react";
+import { Target, Calendar, FileText, BookOpen, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +27,22 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
             Our strategic objectives and future priorities driving RISHI Lab's research direction and impact.
           </p>
         </div>
+
+        <SearchFilter
+          pageUrl="/goals"
+          placeholder="Search goals by title or description..."
+          filterOptions={[
+            {
+              label: "Category",
+              key: "category",
+              options: data.categoryOptions.map((c) => ({ label: c, value: c }))
+            }
+          ]}
+          sortOptions={[
+            { label: "Recent", value: "recent" },
+            { label: "Category", value: "category" }
+          ]}
+        />
 
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {data.goals.length > 0 ? (
@@ -66,9 +82,43 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
             page={data.page}
             totalPages={data.totalPages}
             baseUrl="/goals"
-            params={{ query: data.query, sort: data.sort }}
+            params={{ query: data.query, category: data.category, sort: data.sort }}
           />
         )}
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2">
+          <Link
+            href="/patents"
+            className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-md hover:border-slate-300"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="rounded-lg bg-slate-100 p-3">
+                <FileText className="h-6 w-6 text-navy" />
+              </div>
+              <ArrowRight className="h-5 w-5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-navy" />
+            </div>
+            <h3 className="mt-5 text-lg font-semibold text-ink">Patents &amp; Inventions</h3>
+            <p className="mt-3 leading-6 text-slate-600">
+              See how our research translates into filed patents and deployable circuit IP.
+            </p>
+          </Link>
+
+          <Link
+            href="/publications"
+            className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-md hover:border-slate-300"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="rounded-lg bg-slate-100 p-3">
+                <BookOpen className="h-6 w-6 text-navy" />
+              </div>
+              <ArrowRight className="h-5 w-5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-navy" />
+            </div>
+            <h3 className="mt-5 text-lg font-semibold text-ink">Publications</h3>
+            <p className="mt-3 leading-6 text-slate-600">
+              Explore journal and conference papers that underpin our strategic research goals.
+            </p>
+          </Link>
+        </div>
       </section>
 
       <section className="bg-gradient-to-r from-navy to-cyan-600 text-white py-16">

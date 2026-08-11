@@ -4,12 +4,11 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const images = [
-  "/images/20230827_142636.jpg",
-  "/images/20231110_210617.jpg",
-  "/images/20240314_133813.jpg",
-  "/images/20240721_174225.jpg",
-  "/images/WhatsApp_Image_2025-04-09_at_16.20.24_d80d446b.jpg",
-  "/images/20230703_143246.jpg"
+  { src: "/images/20230827_142636.jpg", position: "center 30%" },
+  { src: "/images/20231110_210617.jpg", position: "center 30%" },
+  { src: "/images/20240721_174225.jpg", position: "center 25%" },
+  { src: "/images/WhatsApp_Image_2025-04-09_at_16.20.24_d80d446b.jpg", position: "center top" },
+  { src: "/images/20230703_143246.jpg", position: "center 20%" }
 ];
 
 export function HeroCarousel() {
@@ -24,12 +23,13 @@ export function HeroCarousel() {
     <div className="absolute inset-0">
       {images.map((image, index) => (
         <Image
-          key={image}
-          src={image}
+          key={image.src}
+          src={image.src}
           alt="RISHI Lab research environment"
           fill
           priority={index === 0}
           sizes="100vw"
+          style={{ objectPosition: image.position }}
           className={`object-cover transition-opacity duration-1000 ${index === active ? "opacity-100" : "opacity-0"}`}
         />
       ))}

@@ -13,11 +13,15 @@ export const resources = {
   },
   students: {
     label: "Students",
-    fields: ["name", "program", "topic", "status", "email", "image", "sortOrder"]
+    fields: ["name", "program", "topic", "status", "category", "email", "image", "sortOrder"]
   },
   goals: {
     label: "Goals",
     fields: ["title", "category", "description", "targetYear", "status", "sortOrder"]
+  },
+  courses: {
+    label: "Courses",
+    fields: ["code", "title", "term", "level", "description", "topics", "sortOrder"]
   }
 } as const;
 

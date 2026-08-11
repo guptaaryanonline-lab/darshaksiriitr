@@ -37,11 +37,11 @@ export default async function PublicationsPage({
     <main>
       <SiteHeader />
 
-      <section className="section-shell pt-8 pb-12">
+      <section className="section-shell pt-8">
         <div className="max-w-3xl">
           <p className="eyebrow">Research Output</p>
-          <h1 className="mt-3 text-4xl font-semibold text-ink sm:text-5xl">Publications</h1>
-          <p className="mt-6 leading-8 text-slate-700">
+          <h1 className="mt-3 text-3xl font-semibold text-ink sm:text-4xl">Publications</h1>
+          <p className="mt-4 leading-7 text-slate-700">
             My research has been published in prestigious IEEE journals and international conferences, focusing on RF/analog integrated
             circuit design and wireless communication systems.
           </p>
@@ -68,11 +68,9 @@ export default async function PublicationsPage({
             View Google Scholar Profile →
           </a>
         </div>
-      </section>
 
-      {/* Filters */}
-      <section className="section-shell pb-12">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+        {/* Filters */}
+        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <div className="space-y-4">
             <div>
               <p className="text-xs font-bold text-slate-600 uppercase mb-3">Year</p>
@@ -133,10 +131,9 @@ export default async function PublicationsPage({
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Publications by Year */}
-      <section className="section-shell pb-16">
+        {/* Publications by Year */}
+        <div className="mt-8">
         {filteredPublications.length > 0 ? (
           <div className="space-y-12">
             {Array.from(new Set(filteredPublications.map((p) => p.year)))
@@ -204,6 +201,7 @@ export default async function PublicationsPage({
             <p className="text-slate-600">No publications found matching your filters.</p>
           </div>
         )}
+        </div>
       </section>
 
       {/* Stats Section */}

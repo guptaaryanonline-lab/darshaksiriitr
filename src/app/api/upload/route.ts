@@ -1,40 +1,22 @@
 import { NextResponse } from "next/server";
+import { saveUploadedImage } from "@/lib/uploads";
 
-export const runtime = "edge";
+// Writing to local disk requires the Node.js runtime (fs access is not
+// available on the edge runtime).
+export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
-
-    if (!cloudName || !uploadPreset) {
-      return NextResponse.json({ error: "CLOUDINARY_CLOUD_NAME and CLOUDINARY_UPLOAD_PRESET must be set" }, { status: 500 });
-    }
-
     const form = await request.formData();
     const file = form.get("file") as Blob | null;
     if (!file) {
       return NextResponse.json({ error: "No file provided. Send form-data with key 'file'" }, { status: 400 });
     }
 
-    const uploadData = new FormData();
-    uploadData.append("file", file as any);
-    uploadData.append("upload_preset", uploadPreset);
-    // place uploads in the preset asset folder
-    uploadData.append("folder", "portfolio/darshakbhatt");
-
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: "POST",
-      body: uploadData,
-    });
-
-    const json = await res.json();
-    if (!res.ok) {
-      return NextResponse.json({ error: json }, { status: res.status });
-    }
-
-    return NextResponse.json({ url: json.secure_url || json.url });
+    const url = await saveUploadedImage(file);
+    return NextResponse.json({ url });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Upload failed";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }
