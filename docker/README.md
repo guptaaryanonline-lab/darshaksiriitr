@@ -110,6 +110,50 @@ Visit `http://13.201.172.206/` to confirm the site loads, and
 `http://13.201.172.206/api/health` to confirm the app can reach the
 database (`{"status":"ok"}`).
 
+## 3b. Automatic deploys via GitHub Actions (CI/CD)
+
+[`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) SSHes into
+the EC2 instance on every push to `main` and re-deploys: `git pull` →
+`docker compose build app` → `docker compose up -d`. Postgres and the
+uploads volume are untouched — this only rebuilds/restarts the `app`
+container. One-time setup, done once on your machine + GitHub, never by CI:
+
+**a. Generate a dedicated deploy key (don't reuse your personal SSH key):**
+```bash
+ssh-keygen -t ed25519 -f ./deploy_key -N "" -C "github-actions-deploy"
+```
+This creates `deploy_key` (private) and `deploy_key.pub` (public) in your
+current directory.
+
+**b. Authorize the public key on the EC2 instance:**
+```bash
+ssh-copy-id -i ./deploy_key.pub ec2-user@13.201.172.206
+# or manually: paste deploy_key.pub into ~/.ssh/authorized_keys on the box
+```
+
+**c. Make sure the repo is already cloned to `~/app` on the instance** with
+`.env.production` filled in (steps 2–3 above) — the workflow only pulls and
+restarts, it does not clone or create env files.
+
+**d. Add three repository secrets** on GitHub
+(`Settings → Secrets and variables → Actions → New repository secret`):
+
+| Secret name | Value |
+|---|---|
+| `EC2_HOST` | `13.201.172.206` |
+| `EC2_USER` | `ec2-user` |
+| `EC2_SSH_KEY` | full contents of the `deploy_key` **private** key file |
+
+**e. Delete the local `deploy_key` / `deploy_key.pub` files** once the
+secret is saved — don't leave the private key sitting on disk or commit it.
+
+From then on, every push to `main` (or a manual run from the Actions tab)
+redeploys automatically. Watch progress under the repo's **Actions** tab.
+
+Database schema changes still go out safely: `prisma migrate deploy` runs
+inside `docker/entrypoint.sh` on every container start, so a merged
+migration ships automatically with the next deploy.
+
 ## 4. HTTPS (required before relying on the admin panel)
 
 The admin login cookie is marked `Secure` in production, so **admin login
