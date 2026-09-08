@@ -1,0 +1,60 @@
+# Always-on HTTP server. Serves the app directly, and proxies Let's
+# Encrypt's HTTP-01 challenge so certbot can (re)issue certificates without
+# any downtime or manual steps.
+upstream nextjs_app {
+  server app:3000;
+  keepalive 64;
+}
+
+gzip on;
+gzip_vary on;
+gzip_comp_level 5;
+gzip_min_length 256;
+gzip_proxied any;
+gzip_types
+  text/plain
+  text/css
+  text/xml
+  application/json
+  application/javascript
+  application/xml+rss
+  application/xml
+  image/svg+xml;
+
+server {
+  listen 80;
+  server_name _;
+
+  # Required so certbot's HTTP-01 challenge can be served/renewed at any time.
+  location /.well-known/acme-challenge/ {
+    root /var/www/certbot;
+  }
+
+  # Uploaded images are written at runtime into the "app-uploads" volume
+  # (mounted here read-only at /var/www/uploads). Next.js's standalone
+  # server only serves files that existed in public/ at build time, so a
+  # file uploaded after the app started 404s if we proxy it to Node —
+  # nginx serves it directly from the shared volume instead.
+  location /uploads/ {
+    alias /var/www/uploads/;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+  }
+
+  location / {
+    proxy_pass http://nextjs_app;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_cache_bypass $http_upgrade;
+
+    proxy_connect_timeout 10s;
+    proxy_send_timeout 60s;
+    proxy_read_timeout 60s;
+
+    client_max_body_size 20m;
+  }
+}

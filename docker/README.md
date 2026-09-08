@@ -158,28 +158,47 @@ migration ships automatically with the next deploy.
 
 The admin login cookie is marked `Secure` in production, so **admin login
 will not work over plain HTTP** — the browser silently refuses to store the
-cookie. Put a real domain + TLS in front before using `/admin`:
+cookie. HTTPS is fully automatic — no manual certbot commands, no editing
+nginx config by hand, and it self-renews for as long as the stack runs:
 
-1. Point a DNS A record at `13.201.172.206`.
-2. Get a certificate with certbot in standalone mode, writing into the
-   `darshak-bhatt-nginx-certs` volume (stop `nginx` first so port 80 is free):
+1. Point a DNS A record for your domain at `13.201.172.206` and wait for it
+   to resolve (`dig +short your-domain.example.com` should return the IP).
+2. Fill in `DOMAIN` and `CERTBOT_EMAIL` in `.env.production`:
    ```bash
-   docker compose stop nginx
-   docker run --rm \
-     -v darshak-bhatt-nginx-certs:/etc/letsencrypt \
-     -v darshak-bhatt-certbot-webroot:/var/www/certbot \
-     -p 80:80 \
-     certbot/certbot certonly --standalone \
-     -d your-domain.example.com --agree-tos -m you@example.com --non-interactive
+   DOMAIN=your-domain.example.com
+   CERTBOT_EMAIL=you@example.com
    ```
-3. Uncomment the HTTPS `server` block in
-   [`docker/nginx/default.conf`](nginx/default.conf), update `server_name`,
-   then `docker compose --env-file .env.production up -d nginx`.
-4. Set up renewal via cron (`certbot renew` on the same volumes) every ~60
-   days.
+3. Restart the stack so the new env vars take effect:
+   ```bash
+   docker compose --env-file .env.production up -d
+   ```
 
-Until HTTPS is set up, the public pages work fine over HTTP — only the
-admin login is blocked.
+What happens automatically from here:
+- The `certbot` container requests a certificate for `DOMAIN` via the
+  HTTP-01 challenge (served through `nginx`'s always-on port 80), retrying
+  every 10s for up to ~100s while nginx finishes starting.
+- The `nginx` container watches for that certificate to appear and reloads
+  itself within ~30s of it showing up — no restart needed, no downtime.
+- Once live, `http://your-domain.example.com` redirects to
+  `https://your-domain.example.com`; the bare IP keeps serving HTTP only
+  (Let's Encrypt cannot issue a certificate for a bare IP address).
+- `certbot` renews the certificate automatically every 12 hours (Let's
+  Encrypt certs are valid 90 days; certbot only actually renews when a cert
+  is within 30 days of expiry), and `nginx` reloads again automatically
+  when it does.
+
+Leaving `DOMAIN` blank keeps the whole stack HTTP-only (fine for IP-only
+access, or before you've set up a domain) — the `certbot` container just
+idles in that case instead of failing. Until HTTPS is set up, the public
+pages work fine over HTTP — only the admin login is blocked.
+
+**Troubleshooting:**
+```bash
+docker compose logs -f certbot   # certificate issuance/renewal status
+docker compose logs -f nginx     # config render + reload status
+```
+The most common failure is DNS not yet resolving to this instance, or the
+security group not allowing inbound `80` — the HTTP-01 challenge needs both.
 
 ## Operations
 

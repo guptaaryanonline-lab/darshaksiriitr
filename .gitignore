@@ -8,3 +8,7 @@ guidelines
 tsconfig.tsbuildinfo
 prisma/dev.db
 .next
+
+# SSH deploy keys — never commit these
+deploy_key
+deploy_key.pub

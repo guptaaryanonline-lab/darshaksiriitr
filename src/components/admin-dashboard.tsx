@@ -101,6 +101,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
@@ -115,6 +116,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
     setFormOpen(false);
     setDraft({ ...emptyItem[resource], sortOrder: getNextSortOrder(resource) });
     setMessage("");
+    setIsError(false);
   }
 
   function openNewForm() {
@@ -122,6 +124,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
     setDraft({ ...emptyItem[active], sortOrder: getNextSortOrder(active) });
     setFormOpen(true);
     setMessage("");
+    setIsError(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -130,6 +133,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
     setFormOpen(false);
     setDraft({ ...emptyItem[active], sortOrder: getNextSortOrder(active) });
     setMessage("");
+    setIsError(false);
   }
 
   function edit(item: Item) {
@@ -157,11 +161,13 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("");
+    setIsError(false);
 
     const missingFields = validateDraft(active, draft);
     if (missingFields.length > 0) {
       const message = `Required field${missingFields.length > 1 ? "s" : ""} missing: ${missingFields.join(", ")}`;
       setMessage(message);
+      setIsError(true);
       toast.error(message);
       return;
     }
@@ -176,6 +182,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
     setIsSaving(false);
     if (!response.ok) {
       setMessage("Could not save. Please check required fields.");
+      setIsError(true);
       toast.error("Could not save. Please check required fields.");
       return;
     }
@@ -188,6 +195,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
     setEditingId(null);
     setFormOpen(false);
     setMessage("Saved successfully.");
+    setIsError(false);
     toast.success("Saved successfully.");
     router.refresh();
   }
@@ -196,11 +204,13 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
     const response = await fetch(`/api/admin/${active}/${id}`, { method: "DELETE" });
     if (!response.ok) {
       setMessage("Could not delete this entry.");
+      setIsError(true);
       toast.error("Could not delete this entry.");
       return;
     }
     setData((current) => ({ ...current, [active]: current[active].filter((item) => item.id !== id) }));
     setMessage("Deleted successfully.");
+    setIsError(false);
     toast.success("Deleted successfully.");
     router.refresh();
   }
@@ -215,16 +225,16 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
     <main className="min-h-screen bg-slate-50">
       <Toaster />
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-8 lg:px-10">
-          <div>
-            <h1 className="text-xl font-semibold text-ink sm:text-2xl">Content Admin</h1>
-            <p className="mt-0.5 text-sm text-slate-500">Signed in as {email}</p>
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4 sm:px-8 lg:px-10">
+          <div className="min-w-0">
+            <h1 className="text-lg font-semibold text-ink sm:text-xl lg:text-2xl">Content Admin</h1>
+            <p className="mt-0.5 truncate text-sm text-slate-500">Signed in as {email}</p>
           </div>
-          <div className="flex gap-2">
-            <a href="/" className={secondaryButton}>
+          <div className="flex shrink-0 gap-2">
+            <a href="/" className={`${secondaryButton} flex-1 sm:flex-none`}>
               View site
             </a>
-            <button onClick={logout} className={primaryButton}>
+            <button onClick={logout} className={`${primaryButton} flex-1 sm:flex-none`}>
               <LogOut className="h-4 w-4" />
               Logout
             </button>
@@ -232,14 +242,14 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-6 px-5 py-6 sm:px-8 sm:py-8 lg:grid-cols-[240px_1fr] lg:px-10">
+      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-5 sm:gap-6 sm:px-8 sm:py-8 lg:grid-cols-[240px_1fr] lg:px-10">
         <aside className="h-fit rounded-xl border border-slate-200 bg-white p-2 shadow-soft lg:sticky lg:top-24">
-          <nav className="flex gap-1.5 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
+          <nav className="-mx-2 flex snap-x gap-1.5 overflow-x-auto scroll-px-2 px-2 pb-1 lg:mx-0 lg:snap-none lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0">
             {(Object.keys(resources) as ResourceName[]).map((resource) => (
               <button
                 key={resource}
                 onClick={() => changeResource(resource)}
-                className={`flex shrink-0 cursor-pointer items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-left text-sm font-semibold transition duration-150 lg:w-full ${
+                className={`flex shrink-0 cursor-pointer snap-start items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-left text-sm font-semibold transition duration-150 lg:w-full ${
                   active === resource ? "bg-navy text-white" : "text-slate-600 hover:bg-slate-100 hover:text-ink"
                 }`}
               >
@@ -283,6 +293,20 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
                   Close
                 </button>
               </div>
+
+              {message ? (
+                <p
+                  role="alert"
+                  className={`mb-4 rounded-lg border px-3.5 py-2.5 text-sm font-medium ${
+                    isError
+                      ? "border-red-200 bg-red-50 text-red-700"
+                      : "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  }`}
+                >
+                  {message}
+                </p>
+              ) : null}
+
               <fieldset disabled={isSaving} aria-busy={isSaving}>
                 <div className="grid gap-4 md:grid-cols-2">
                   {fields.map((field) => (
@@ -296,7 +320,6 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
                   ))}
                 </div>
 
-                {message ? <p className="mt-4 rounded-lg bg-slate-100 px-3.5 py-2.5 text-sm font-medium text-slate-700">{message}</p> : null}
                 <button type="submit" className={`${primaryButton} mt-5 w-full sm:w-auto`}>
                   {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   {isSaving ? "Saving..." : "Save"}

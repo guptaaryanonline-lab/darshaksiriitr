@@ -1,0 +1,4 @@
+# Force LF line endings for shell scripts regardless of the checkout
+# platform's line-ending settings — a CRLF shebang line breaks scripts
+# executed inside Linux containers ("no such file or directory").
+*.sh text eol=lf
