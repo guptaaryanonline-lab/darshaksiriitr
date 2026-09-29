@@ -12,7 +12,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function LabPage() {
-  const { research, students, projects, patents } = await getSiteContent();
+  const { research, students, projects, publications } = await getSiteContent();
 
   const facilities = [
     {
@@ -42,11 +42,11 @@ export default async function LabPage() {
       <SiteHeader />
 
       {/* Hero Section */}
-      <section className="section-shell pt-8 pb-16">
+      <section className="section-shell pb-10 pt-6 sm:pb-16 sm:pt-8">
         <div className="max-w-3xl">
           <p className="eyebrow">About RISHI Lab</p>
-          <h1 className="mt-3 text-4xl font-semibold text-ink sm:text-5xl">RF Integrated Circuit and System Innovation Lab</h1>
-          <p className="mt-6 leading-8 text-lg text-slate-700">
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-5xl">RF Integrated Circuit and System Innovation Lab</h1>
+          <p className="mt-5 text-base leading-7 text-slate-700 sm:mt-6 sm:text-lg sm:leading-8">
             RISHI Lab is at the forefront of RF and analog integrated circuit design, developing innovative solutions for wireless
             communication, quantum computing, and sub-THz systems. Our research combines circuit-level innovation with practical
             implementation, measurement, publications, and student training.
@@ -55,33 +55,33 @@ export default async function LabPage() {
       </section>
 
       {/* Lab Overview Stats */}
-      <section className="section-shell">
-        <div className="grid gap-6 md:grid-cols-4">
-          <article className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
-            <div className="text-3xl font-bold text-navy">{students.length}</div>
-            <p className="mt-2 font-semibold text-slate-600">Active Students</p>
-            <p className="mt-1 text-sm text-slate-500">PhD & M.Tech researchers</p>
+      <section className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4">
+          <article className="panel p-4 text-center sm:p-6">
+            <div className="text-2xl font-bold tabular-nums text-navy sm:text-3xl">{students.length}</div>
+            <p className="mt-2 text-sm font-semibold text-slate-600 sm:text-base">Active Students</p>
+            <p className="mt-1 text-xs text-slate-500 sm:text-sm">PhD & M.Tech researchers</p>
           </article>
-          <article className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
-            <div className="text-3xl font-bold text-navy">{projects.length}</div>
-            <p className="mt-2 font-semibold text-slate-600">Research Projects</p>
-            <p className="mt-1 text-sm text-slate-500">Ongoing & completed</p>
+          <article className="panel p-4 text-center sm:p-6">
+            <div className="text-2xl font-bold tabular-nums text-navy sm:text-3xl">{projects.length}</div>
+            <p className="mt-2 text-sm font-semibold text-slate-600 sm:text-base">Research Projects</p>
+            <p className="mt-1 text-xs text-slate-500 sm:text-sm">Ongoing & completed</p>
           </article>
-          <article className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
-            <div className="text-3xl font-bold text-navy">{patents.length}</div>
-            <p className="mt-2 font-semibold text-slate-600">Patents & IP</p>
-            <p className="mt-1 text-sm text-slate-500">Intellectual property</p>
+          <article className="panel p-4 text-center sm:p-6">
+            <div className="text-2xl font-bold tabular-nums text-navy sm:text-3xl">{publications.length}</div>
+            <p className="mt-2 text-sm font-semibold text-slate-600 sm:text-base">Publications</p>
+            <p className="mt-1 text-xs text-slate-500 sm:text-sm">Journals & conferences</p>
           </article>
-          <article className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
-            <div className="text-3xl font-bold text-navy">{research.length}</div>
-            <p className="mt-2 font-semibold text-slate-600">Research Areas</p>
-            <p className="mt-1 text-sm text-slate-500">Specialized domains</p>
+          <article className="panel p-4 text-center sm:p-6">
+            <div className="text-2xl font-bold tabular-nums text-navy sm:text-3xl">{research.length}</div>
+            <p className="mt-2 text-sm font-semibold text-slate-600 sm:text-base">Research Areas</p>
+            <p className="mt-1 text-xs text-slate-500 sm:text-sm">Specialized domains</p>
           </article>
         </div>
       </section>
 
       {/* Research Focus Areas */}
-      <section className="section-shell pt-16">
+      <section className="section-shell pt-10 sm:pt-16">
         <div className="mb-10 max-w-2xl">
           <p className="eyebrow">Expertise</p>
           <h2 className="mt-3 text-3xl font-semibold text-ink">Research Focus Areas</h2>

@@ -23,6 +23,12 @@ type Item = Record<string, unknown> & { id?: string };
 type DataMap = Record<ResourceName, Item[]>;
 
 const emptyItem: Record<ResourceName, Item> = {
+  hero: {
+    image: "",
+    caption: "",
+    position: "center",
+    sortOrder: 0,
+  },
   projects: {
     title: "",
     status: "Active",
@@ -40,22 +46,31 @@ const emptyItem: Record<ResourceName, Item> = {
     topics: "",
     sortOrder: 0,
   },
-  patents: {
+  publications: {
     title: "",
-    inventors: "",
-    status: "Filed",
+    authors: "",
+    type: "Journal",
     year: new Date().getFullYear(),
-    description: "",
+    journal: "",
+    conference: "",
+    volume: "",
+    pages: "",
+    doi: "",
     link: "",
     sortOrder: 0,
   },
   students: {
     name: "",
-    program: "",
+    program: "PhD",
     topic: "",
+    researchStatement: "",
     status: "Current",
     category: "Current",
+    joiningYear: "",
     email: "",
+    scholarLink: "",
+    linkedinLink: "",
+    workplace: "",
     image: "",
     sortOrder: 0,
   },
@@ -79,11 +94,11 @@ const emptyItem: Record<ResourceName, Item> = {
 };
 
 const primaryButton =
-  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition duration-150 hover:bg-ink active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-navy px-4 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-ink active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60";
 const secondaryButton =
-  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition duration-150 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition duration-200 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60";
 const dangerButton =
-  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-red-600 px-3.5 py-2 text-sm font-semibold text-white transition duration-150 hover:bg-red-700 active:scale-[0.98]";
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-red-600 px-3.5 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-red-700 active:scale-[0.98]";
 
 export function AdminDashboard({ email, initialData }: { email: string; initialData: DataMap }) {
   const router = useRouter();
@@ -144,8 +159,10 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
   }
 
   function validateDraft(resource: ResourceName, draft: Item) {
-    const requiredFields = new Set(["title", "name", "status", "description", "program", "topic", "email", "year", "category", "targetYear", "code", "term", "level"]);
+    const requiredFields = new Set(["title", "name", "status", "description", "program", "topic", "researchStatement", "year", "category", "targetYear", "code", "term", "level", "authors", "type"]);
     const missing = [] as string[];
+
+    if (resource === "hero") requiredFields.add("image");
 
     for (const field of resources[resource].fields) {
       if (!requiredFields.has(field)) continue;
@@ -342,9 +359,9 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
                       </div>
                     ) : null}
                     <div className="min-w-0">
-                      <h3 className="truncate font-semibold text-ink">{String(item.title || item.name || "Untitled")}</h3>
+                      <h3 className="truncate font-semibold text-ink">{String(item.title || item.name || item.caption || (active === "hero" ? "Hero slide" : "Untitled"))}</h3>
                       <p className="mt-0.5 line-clamp-1 text-sm leading-6 text-slate-500">
-                        {String(item.description || item.topic || item.status || "")}
+                        {String(item.description || item.topic || item.status || (active === "hero" ? `Focus: ${item.position || "center"} · Order ${item.sortOrder ?? 0}` : ""))}
                       </p>
                     </div>
                   </div>
@@ -474,20 +491,46 @@ function ImageField({ value, onChange }: { value: string; onChange: (value: stri
 }
 
 function FieldInput({ field, value, onChange, active }: { field: string; value: unknown; onChange: (value: string) => void; active: ResourceName }) {
-  const isLong = ["description", "objectives", "topics"].includes(field);
+  const isLong = ["description", "objectives", "topics", "researchStatement"].includes(field);
   const label = field.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase());
   const normalized = Array.isArray(value) ? value.join("\n") : String(value ?? "");
   const isStatusSelect = active === "projects" && field === "status";
   const isCategorySelect = active === "students" && field === "category";
-  const requiredFields = new Set(["title", "status", "description", "name", "program", "topic", "email", "year", "category", "targetYear", "code", "term", "level"]);
+  const isTypeSelect = active === "publications" && field === "type";
+  const isProgramSelect = active === "students" && field === "program";
+  const isPositionSelect = active === "hero" && field === "position";
+  const requiredFields = new Set(["title", "status", "description", "name", "program", "topic", "researchStatement", "year", "category", "targetYear", "code", "term", "level", "authors", "type"]);
   const isRequired = requiredFields.has(field) && !["image", "link", "objectives", "publications", "impact", "sortOrder"].includes(field);
   const isImageField = field === "image";
 
   if (isImageField) {
+    const isHero = active === "hero";
     return (
-      <label className="block">
-        <span className="block text-sm font-semibold text-slate-700">{label}</span>
+      <label className={`block ${isHero ? "md:col-span-2" : ""}`}>
+        <span className="block text-sm font-semibold text-slate-700">{label}{isHero ? " *" : ""}</span>
+        {isHero ? (
+          <span className="mt-1 block text-xs text-slate-500">Use a wide landscape photo (at least 1920×1080). Text sits on top, so busy areas get darkened.</span>
+        ) : null}
         <ImageField value={normalized} onChange={onChange} />
+      </label>
+    );
+  }
+
+  if (isPositionSelect) {
+    return (
+      <label>
+        <span className="block text-sm font-semibold text-slate-700">Focus (part of photo kept visible)</span>
+        <select
+          value={normalized || "center"}
+          onChange={(event) => onChange(event.target.value)}
+          className="focus-ring mt-2 w-full cursor-pointer rounded-lg border border-slate-300 px-3 py-2 text-sm"
+        >
+          <option value="center top">Top (faces near the top)</option>
+          <option value="center 25%">Upper third</option>
+          <option value="center">Center</option>
+          <option value="center 75%">Lower third</option>
+          <option value="center bottom">Bottom</option>
+        </select>
       </label>
     );
   }
@@ -526,12 +569,55 @@ function FieldInput({ field, value, onChange, active }: { field: string; value: 
           <option>Current</option>
           <option>Placed</option>
         </select>
+      ) : isTypeSelect ? (
+        <select
+          value={normalized}
+          onChange={(event) => onChange(event.target.value)}
+          className="focus-ring mt-2 w-full cursor-pointer rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          required={isRequired}
+        >
+          <option>Journal</option>
+          <option>Conference</option>
+        </select>
+      ) : isProgramSelect ? (
+        <>
+          <input
+            value={normalized}
+            onChange={(event) => onChange(event.target.value)}
+            list="program-options"
+            className="focus-ring mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            placeholder="PhD, MTech, MS (Research), or other"
+            required={isRequired}
+          />
+          <datalist id="program-options">
+            <option value="PhD" />
+            <option value="MTech" />
+            <option value="MS (Research)" />
+          </datalist>
+        </>
       ) : (
         <input
           value={normalized}
           onChange={(event) => onChange(event.target.value)}
           className="focus-ring mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-          type={["year", "sortOrder", "publications"].includes(field) ? "number" : "text"}
+          type={
+            ["year", "sortOrder", "publications"].includes(field)
+              ? "number"
+              : ["scholarLink", "linkedinLink"].includes(field)
+                ? "url"
+                : "text"
+          }
+          placeholder={
+            field === "scholarLink"
+              ? "https://scholar.google.com/citations?user=..."
+              : field === "linkedinLink"
+                ? "https://linkedin.com/in/..."
+                : field === "joiningYear"
+                  ? "e.g. 2023 or Aug 2023"
+                  : field === "workplace"
+                    ? "Only if placed"
+                    : undefined
+          }
           required={isRequired}
           min={field === "year" || field === "sortOrder" || field === "publications" ? 0 : undefined}
         />

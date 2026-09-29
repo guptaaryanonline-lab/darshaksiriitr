@@ -88,7 +88,7 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2">
           <Link
-            href="/patents"
+            href="/projects"
             className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-md hover:border-slate-300"
           >
             <div className="flex items-start justify-between gap-3">
@@ -97,9 +97,9 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
               </div>
               <ArrowRight className="h-5 w-5 text-slate-400 transition group-hover:translate-x-1 group-hover:text-navy" />
             </div>
-            <h3 className="mt-5 text-lg font-semibold text-ink">Patents &amp; Inventions</h3>
+            <h3 className="mt-5 text-lg font-semibold text-ink">Research Projects</h3>
             <p className="mt-3 leading-6 text-slate-600">
-              See how our research translates into filed patents and deployable circuit IP.
+              See the active and completed projects that turn these goals into measured silicon.
             </p>
           </Link>
 
@@ -127,7 +127,7 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
           <p className="mt-4 leading-7 text-slate-100">
             If our research goals align with your interests, we'd love to hear from you for potential collaborations and partnerships.
           </p>
-          <Link href="/contact" className="mt-6 inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-navy transition duration-150 hover:bg-slate-100 active:scale-[0.98]">
+          <Link href="/contact" className="mt-6 inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-navy transition duration-200 hover:bg-slate-100 active:scale-[0.98]">
             Reach out to us
           </Link>
         </div>

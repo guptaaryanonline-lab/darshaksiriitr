@@ -16,12 +16,14 @@ function parseList(value: unknown) {
 function findMany(resource: ResourceName) {
   const orderBy = [{ sortOrder: "asc" as const }, { createdAt: "desc" as const }];
   switch (resource) {
+    case "hero":
+      return prisma.heroSlide.findMany({ orderBy });
     case "projects":
       return prisma.project.findMany({ orderBy });
     case "research":
       return prisma.research.findMany({ orderBy });
-    case "patents":
-      return prisma.patent.findMany({ orderBy });
+    case "publications":
+      return prisma.publication.findMany({ orderBy });
     case "students":
       return prisma.student.findMany({ orderBy });
     case "goals":
@@ -34,12 +36,14 @@ function findMany(resource: ResourceName) {
 function createItem(resource: ResourceName, data: Record<string, unknown>) {
   const createData = data as any;
   switch (resource) {
+    case "hero":
+      return prisma.heroSlide.create({ data: createData });
     case "projects":
       return prisma.project.create({ data: createData });
     case "research":
       return prisma.research.create({ data: createData });
-    case "patents":
-      return prisma.patent.create({ data: createData });
+    case "publications":
+      return prisma.publication.create({ data: createData });
     case "students":
       return prisma.student.create({ data: createData });
     case "goals":

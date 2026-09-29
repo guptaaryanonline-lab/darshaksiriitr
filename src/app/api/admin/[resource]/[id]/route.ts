@@ -16,12 +16,14 @@ function parseList(value: unknown) {
 function updateItem(resource: ResourceName, id: string, data: Record<string, unknown>) {
   const updateData = data as any;
   switch (resource) {
+    case "hero":
+      return prisma.heroSlide.update({ where: { id }, data: updateData });
     case "projects":
       return prisma.project.update({ where: { id }, data: updateData });
     case "research":
       return prisma.research.update({ where: { id }, data: updateData });
-    case "patents":
-      return prisma.patent.update({ where: { id }, data: updateData });
+    case "publications":
+      return prisma.publication.update({ where: { id }, data: updateData });
     case "students":
       return prisma.student.update({ where: { id }, data: updateData });
     case "goals":
@@ -33,12 +35,14 @@ function updateItem(resource: ResourceName, id: string, data: Record<string, unk
 
 function deleteItem(resource: ResourceName, id: string) {
   switch (resource) {
+    case "hero":
+      return prisma.heroSlide.delete({ where: { id } });
     case "projects":
       return prisma.project.delete({ where: { id } });
     case "research":
       return prisma.research.delete({ where: { id } });
-    case "patents":
-      return prisma.patent.delete({ where: { id } });
+    case "publications":
+      return prisma.publication.delete({ where: { id } });
     case "students":
       return prisma.student.delete({ where: { id } });
     case "goals":

@@ -54,17 +54,22 @@ model Patent {
 }
 
 model Student {
-  id          String   @id @default(cuid())
-  name        String
-  program     String
-  topic       String
-  status      String
-  category    String   @default("Current")
-  email       String?
-  image       String?
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String   @id @default(cuid())
+  name              String
+  program           String
+  topic             String
+  status            String
+  category          String   @default("Current")
+  email             String?
+  image             String?
+  researchStatement String?
+  joiningYear       String?
+  scholarLink       String?
+  linkedinLink      String?
+  workplace         String?
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 model Goal {
@@ -107,4 +112,14 @@ model Publication {
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model HeroSlide {
+  id        String   @id @default(cuid())
+  image     String
+  caption   String?
+  position  String   @default("center")
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -29,7 +29,7 @@ export function Pagination({ page, totalPages, baseUrl, params = {} }: Paginatio
         {page > 1 && (
           <Link
             href={getUrl(page - 1)}
-            className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition duration-150 hover:bg-slate-50"
+            className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-slate-200 text-slate-600 transition duration-200 hover:bg-slate-50"
           >
             <ChevronLeft className="h-4 w-4" />
           </Link>
@@ -48,7 +48,7 @@ export function Pagination({ page, totalPages, baseUrl, params = {} }: Paginatio
                   {showDots && <span className="px-1 text-slate-400">...</span>}
                   <Link
                     href={getUrl(p)}
-                    className={`inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg font-medium transition duration-150 ${
+                    className={`inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full font-medium transition duration-200 ${
                       p === page ? "bg-navy text-white" : "border border-slate-200 text-slate-700 hover:bg-slate-50"
                     }`}
                   >
@@ -62,7 +62,7 @@ export function Pagination({ page, totalPages, baseUrl, params = {} }: Paginatio
         {page < totalPages && (
           <Link
             href={getUrl(page + 1)}
-            className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition duration-150 hover:bg-slate-50"
+            className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-slate-200 text-slate-600 transition duration-200 hover:bg-slate-50"
           >
             <ChevronRight className="h-4 w-4" />
           </Link>

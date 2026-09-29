@@ -155,7 +155,7 @@ export default async function PublicationsPage({
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-3 mb-2">
-                                  <span className="inline-block rounded-md bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                                  <span className="inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
                                     {pub.type}
                                   </span>
                                   <span className="text-sm font-medium text-slate-600">{pub.year}</span>

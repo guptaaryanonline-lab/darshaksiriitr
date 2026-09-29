@@ -16,16 +16,17 @@ function getIntParam(params: SearchParams, key: string, fallback: number) {
 }
 
 export async function getSiteContent() {
-  const [projects, research, patents, students, goals, courses] = await Promise.all([
+  const [hero, projects, research, publications, students, goals, courses] = await Promise.all([
+    prisma.heroSlide.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }] }),
     prisma.project.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] }),
     prisma.research.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] }),
-    prisma.patent.findMany({ orderBy: [{ sortOrder: "asc" }, { year: "desc" }] }),
+    prisma.publication.findMany({ orderBy: [{ sortOrder: "asc" }, { year: "desc" }] }),
     prisma.student.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] }),
     prisma.goal.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] }),
     prisma.course.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] })
   ]);
 
-  return { projects, research, patents, students, goals, courses };
+  return { hero, projects, research, publications, students, goals, courses };
 }
 
 export function asStringArray(value: unknown) {
@@ -120,42 +121,6 @@ export async function getResearchPage(searchParams: SearchParams) {
 
   return {
     research,
-    total,
-    page,
-    perPage,
-    totalPages: Math.max(1, Math.ceil(total / perPage)),
-    query,
-    sort
-  };
-}
-
-export async function getPatentPage(searchParams: SearchParams) {
-  const page = getIntParam(searchParams, "page", 1);
-  const perPage = getIntParam(searchParams, "perPage", 6);
-  const query = getParam(searchParams, "query");
-  const sort = getParam(searchParams, "sort") || "year";
-
-  const where: any = {};
-  if (query) {
-    where.OR = [
-      { title: { contains: query, mode: "insensitive" } },
-      { inventors: { contains: query, mode: "insensitive" } },
-      { description: { contains: query, mode: "insensitive" } }
-    ];
-  }
-
-  const orderBy: Prisma.PatentOrderByWithRelationInput[] =
-    sort === "status" ? [{ status: "asc" }, { year: "desc" }] : [{ year: "desc" }];
-  const total = await prisma.patent.count({ where });
-  const patents = await prisma.patent.findMany({
-    where,
-    orderBy,
-    skip: (page - 1) * perPage,
-    take: perPage
-  });
-
-  return {
-    patents,
     total,
     page,
     perPage,

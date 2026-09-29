@@ -120,7 +120,7 @@ export default function ContactPage() {
           </p>
           <a
             href="mailto:darshak.bhatt@ece.iitr.ac.in"
-            className="mt-6 inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-navy transition duration-150 hover:bg-slate-100 active:scale-[0.98]"
+            className="mt-6 inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-navy transition duration-200 hover:bg-slate-100 active:scale-[0.98]"
           >
             Send an Email
           </a>

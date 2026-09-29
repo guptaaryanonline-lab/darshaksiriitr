@@ -2,6 +2,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
 import { getProjectPage, asStringArray } from "@/lib/content";
+import { imageFitClass, imageFrameBg } from "@/lib/image-fit";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -51,13 +52,14 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Rec
             data.projects.map((project, idx) => (
               <article key={project.id} className="group rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md hover:border-slate-300 overflow-hidden">
                 <div className="grid lg:grid-cols-[0.45fr_0.55fr]">
-                  <div className="relative min-h-64 lg:min-h-80 bg-slate-200 overflow-hidden">
+                  <div className={`relative min-h-64 overflow-hidden lg:min-h-80 ${project.image ? imageFrameBg(project.image) : "bg-slate-200"}`}>
                     {project.image ? (
                       <Image
                         src={project.image}
                         alt={project.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition duration-500"
+                        sizes="(min-width: 1024px) 45vw, 100vw"
+                        className={`${imageFitClass(project.image)} transition duration-500 group-hover:scale-105`}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-300">

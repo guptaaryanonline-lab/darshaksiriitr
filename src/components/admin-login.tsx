@@ -77,7 +77,7 @@ export function AdminLogin() {
 
         <button
           disabled={loading}
-          className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-navy px-4 py-3 text-sm font-semibold text-white transition duration-150 hover:bg-ink active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-navy px-4 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-ink active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {loading ? "Signing in..." : "Sign in"}

@@ -10,7 +10,7 @@ const nav = [
   ["Lab", "/lab"],
   ["Research", "/research"],
   ["Projects", "/projects"],
-  ["Patents", "/patents"],
+  ["Publications", "/publications"],
   ["Teaching", "/teaching"],
   ["Contact", "/contact"]
 ];
@@ -61,9 +61,9 @@ export function SiteHeader() {
               <Link
                 key={href}
                 href={href}
-                className={`cursor-pointer rounded-lg px-3 py-2 text-sm font-medium transition duration-150 ${
+                className={`cursor-pointer rounded-full px-3.5 py-2 text-sm font-medium transition duration-200 ${
                   isActive(href)
-                    ? "bg-navy text-white"
+                    ? "bg-navy text-white shadow-sm"
                     : "text-slate-600 hover:bg-slate-100 hover:text-ink"
                 }`}
               >
@@ -112,8 +112,8 @@ export function SiteHeader() {
 
       {menuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setMenuOpen(false)} />
-          <nav className="absolute inset-0 z-10 flex flex-col gap-4 overflow-y-auto bg-white p-6 pt-5">
+          <div className="absolute inset-0 animate-[fade-in_0.2s_ease-out] bg-black/40" onClick={() => setMenuOpen(false)} />
+          <nav className="absolute inset-y-0 right-0 z-10 flex w-full animate-[slide-in_0.25s_cubic-bezier(0.16,1,0.3,1)] flex-col gap-4 overflow-y-auto overscroll-contain bg-white p-6 pt-5 shadow-2xl sm:max-w-sm">
             <div className="flex items-center justify-between border-b border-slate-200 pb-4">
               <span className="text-lg font-semibold text-ink">Menu</span>
               <button

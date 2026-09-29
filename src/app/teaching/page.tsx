@@ -81,7 +81,7 @@ export default async function TeachingPage({ searchParams }: { searchParams: Rec
                     <p className="mb-2 text-sm font-semibold text-slate-600">Key Topics:</p>
                     <div className="flex flex-wrap gap-2">
                       {asStringArray(course.topics).map((topic) => (
-                        <span key={topic} className="rounded-md bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                        <span key={topic} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
                           {topic}
                         </span>
                       ))}

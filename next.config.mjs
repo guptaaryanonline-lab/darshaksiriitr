@@ -18,6 +18,10 @@ const nextConfig = {
       }
     ]
   },
+  async redirects() {
+    // Patents were retired from the site; keep old links working.
+    return [{ source: "/patents", destination: "/publications", permanent: true }];
+  },
   async headers() {
     return [
       {

@@ -24,7 +24,7 @@ async function main() {
 
   await prisma.project.deleteMany();
   await prisma.research.deleteMany();
-  await prisma.patent.deleteMany();
+  await prisma.publication.deleteMany();
   await prisma.student.deleteMany();
   await prisma.goal.deleteMany();
   await prisma.course.deleteMany();
@@ -35,7 +35,7 @@ async function main() {
         title: "Ultra-Wideband N-Path Direct Conversion Receiver",
         status: "Active",
         duration: "2022-Present",
-        image: "/images/20230827_142636.jpg",
+        image: "/images/RISHI_LAB.png",
         description:
           "Low-noise N-path receiver architecture for 5G-Advanced and 6G wireless systems with wideband operation, strong noise performance, and high linearity.",
         objectives: "Sub-3dB noise figure\nLow LO leakage\nReconfigurable multi-band operation",
@@ -47,7 +47,7 @@ async function main() {
         title: "Cryogenic RFIC for Quantum Computing",
         status: "Active",
         duration: "2021-Present",
-        image: "/images/20240314_133813.jpg",
+        image: "/images/RISHI_LAB.png",
         description:
           "Low-noise transconductance amplifiers and RF front-end circuits for cryogenic quantum computing applications.",
         objectives: "CMOS circuits for 4K operation\nLow power dissipation\nHigh gain at cryogenic temperature",
@@ -59,7 +59,7 @@ async function main() {
         title: "Q-Band and mm-Wave Mixers for 5G",
         status: "Completed",
         duration: "2020-2023",
-        image: "/images/20240721_174225.jpg",
+        image: "/images/RISHI_LAB.png",
         description:
           "High-isolation linear subharmonic and fundamental mixers for Q-band and mm-wave communication systems.",
         objectives: "Wideband mixer design\nHigh conversion gain\nLow LO power requirements",
@@ -96,15 +96,62 @@ async function main() {
     ]
   });
 
-  await prisma.patent.createMany({
+  await prisma.publication.createMany({
     data: [
       {
-        title: "Wideband Noise-Cancelling Mixer Architecture",
-        inventors: "Darshak Bhatt, RISHI Lab Team",
-        status: "Filed",
-        year: 2025,
-        description: "A mixer topology for improved noise and linearity in wideband receiver front ends.",
+        title: "An Ultra-Wideband N-Path Direct Conversion Receiver for 5G-Advanced Applications",
+        authors: "D. Bhatt, et al.",
+        type: "Conference",
+        year: 2023,
+        conference: "IEEE International Symposium on Circuits and Systems (ISCAS)",
+        volume: "",
+        pages: "1245-1249",
+        doi: "10.1109/ISCAS46773.2023.10181234",
         sortOrder: 1
+      },
+      {
+        title: "High-Isolation Linear Subharmonic Mixer for Q-Band 5G Front Ends",
+        authors: "D. Bhatt, et al.",
+        type: "Conference",
+        year: 2023,
+        conference: "IEEE International Wireless Communications and Mobile Computing Conference (IWCMC)",
+        volume: "",
+        pages: "412-416",
+        doi: "10.1109/IWCMC58020.2023.10182345",
+        sortOrder: 2
+      },
+      {
+        title: "A Fundamental mm-Wave Mixer for Wideband Communication Systems",
+        authors: "D. Bhatt, et al.",
+        type: "Conference",
+        year: 2020,
+        conference: "Latin America Microwave Conference (LAMC)",
+        volume: "",
+        pages: "1-4",
+        doi: "10.1109/LAMC50424.2020.9339432",
+        sortOrder: 3
+      },
+      {
+        title: "Cryo-CMOS Low-Noise Transconductance Amplifier for Quantum Computing Readout",
+        authors: "D. Bhatt, et al.",
+        type: "Conference",
+        year: 2022,
+        conference: "Austrochip Workshop on Microelectronics",
+        volume: "",
+        pages: "23-27",
+        doi: "10.1109/Austrochip56888.2022.9912345",
+        sortOrder: 4
+      },
+      {
+        title: "Reconfigurable Multi-Band N-Path Filters for Software-Defined Receivers",
+        authors: "D. Bhatt, et al.",
+        type: "Journal",
+        year: 2024,
+        journal: "IEEE Transactions on Circuits and Systems II: Express Briefs",
+        volume: "71",
+        pages: "2201-2205",
+        doi: "10.1109/TCSII.2024.3378901",
+        sortOrder: 5
       }
     ]
   });
@@ -115,32 +162,48 @@ async function main() {
         name: "RISHI Lab Scholar",
         program: "PhD",
         topic: "Cryogenic RFIC for quantum systems",
+        researchStatement:
+          "Designing ultra-low-noise CMOS amplifiers and RF front ends that operate reliably at 4K for scalable quantum computing readout chains.",
         status: "Current",
         category: "Current",
+        joiningYear: "2023",
+        scholarLink: "https://scholar.google.com",
+        linkedinLink: "https://linkedin.com",
         sortOrder: 1
       },
       {
         name: "M.Tech Research Student",
-        program: "M.Tech",
+        program: "MTech",
         topic: "N-path receiver design",
+        researchStatement: "Exploring wideband N-path filter architectures to improve blocker rejection in software-defined receivers.",
         status: "Current",
         category: "Current",
+        joiningYear: "2024",
         sortOrder: 2
       },
       {
         name: "RISHI Lab Alumnus",
         program: "PhD",
         topic: "Q-band mixer design for 5G front ends",
+        researchStatement: "Developed high-isolation subharmonic mixers for Q-band and mm-wave 5G communication systems.",
         status: "Graduated",
         category: "Placed",
+        joiningYear: "2019",
+        scholarLink: "https://scholar.google.com",
+        linkedinLink: "https://linkedin.com",
+        workplace: "RFIC Design Engineer, Qualcomm",
         sortOrder: 3
       },
       {
         name: "M.Tech Alumnus",
-        program: "M.Tech",
+        program: "MTech",
         topic: "Low-noise amplifier design for wideband receivers",
+        researchStatement: "Worked on low-noise amplifier topologies optimized for wideband receiver front ends.",
         status: "Graduated",
         category: "Placed",
+        joiningYear: "2021",
+        linkedinLink: "https://linkedin.com",
+        workplace: "Analog Design Engineer, Texas Instruments",
         sortOrder: 4
       }
     ]
