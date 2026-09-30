@@ -64,7 +64,7 @@ const emptyItem: Record<ResourceName, Item> = {
     program: "PhD",
     topic: "",
     researchStatement: "",
-    status: "Current",
+    status: "Currently Pursuing",
     category: "Current",
     joiningYear: "",
     email: "",
@@ -158,6 +158,18 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function updateField(field: string, value: string) {
+    setDraft((current) => {
+      const next: Item = { ...current, [field]: value };
+      // Keep "Show under" in step with the student's status.
+      if (active === "students" && field === "status") {
+        if (/graduat|alumn|placed/i.test(value)) next.category = "Placed";
+        else if (/current|pursu/i.test(value)) next.category = "Current";
+      }
+      return next;
+    });
+  }
+
   function validateDraft(resource: ResourceName, draft: Item) {
     const requiredFields = new Set(["title", "name", "status", "description", "program", "topic", "researchStatement", "year", "category", "targetYear", "code", "term", "level", "authors", "type"]);
     const missing = [] as string[];
@@ -168,7 +180,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
       if (!requiredFields.has(field)) continue;
       const value = draft[field];
       if (value === undefined || value === null || String(value).trim() === "") {
-        missing.push(field.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase()));
+        missing.push(fieldLabel(resource, field));
       }
     }
 
@@ -325,17 +337,26 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
               ) : null}
 
               <fieldset disabled={isSaving} aria-busy={isSaving}>
-                <div className="grid gap-4 md:grid-cols-2">
-                  {fields.map((field) => (
-                    <FieldInput
-                      key={field}
-                      field={field}
-                      active={active}
-                      value={draft[field]}
-                      onChange={(value) => setDraft((current) => ({ ...current, [field]: value }))}
-                    />
-                  ))}
-                </div>
+                {formSections[active] ? (
+                  <div className="space-y-4">
+                    {formSections[active]!.map((section) => (
+                      <section key={section.title} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
+                        <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{section.title}</h3>
+                        <div className="mt-4 grid gap-4 md:grid-cols-2">
+                          {section.fields.map((field) => (
+                            <FieldInput key={field} field={field} active={active} value={draft[field]} onChange={(value) => updateField(field, value)} />
+                          ))}
+                        </div>
+                      </section>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {fields.map((field) => (
+                      <FieldInput key={field} field={field} active={active} value={draft[field]} onChange={(value) => updateField(field, value)} />
+                    ))}
+                  </div>
+                )}
 
                 <button type="submit" className={`${primaryButton} mt-5 w-full sm:w-auto`}>
                   {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
@@ -490,27 +511,74 @@ function ImageField({ value, onChange }: { value: string; onChange: (value: stri
   );
 }
 
+// Human-friendly labels and hints. "resource.field" entries win over plain
+// "field" entries; anything unlisted falls back to a title-cased field name.
+const fieldCopy: Record<string, { label: string; hint?: string }> = {
+  sortOrder: { label: "Display order", hint: "Lower numbers show first." },
+  "hero.image": { label: "Slide image", hint: "Use a wide landscape photo (at least 1920×1080). Text sits on top, so busy areas get darkened." },
+  "hero.caption": { label: "Caption", hint: "Short description of the photo, used for accessibility and search engines." },
+  "hero.position": { label: "Focus", hint: "Which part of the photo stays visible when it is cropped." },
+  "students.name": { label: "Full name" },
+  "students.program": { label: "Program / Degree" },
+  "students.topic": { label: "Research domain / area" },
+  "students.researchStatement": { label: "Research statement", hint: "2–3 sentences shown on the student's card." },
+  "students.image": { label: "Photograph", hint: "A clear portrait works best; it is cropped to a 4:5 frame." },
+  "students.status": { label: "Status" },
+  "students.category": { label: "Show under", hint: "Picks the section on the Students page." },
+  "students.joiningYear": { label: "Joining year / month" },
+  "students.workplace": { label: "Current workplace / position", hint: "For placed alumni, e.g. \"RFIC Engineer, Qualcomm\"." },
+  "students.linkedinLink": { label: "LinkedIn profile URL" },
+  "students.scholarLink": { label: "Google Scholar profile URL" },
+  "students.email": { label: "Email" },
+  "publications.doi": { label: "DOI", hint: "Only the identifier, e.g. 10.1109/ISCAS.2023.1234. Leave empty if unsure." }
+};
+
+function fieldLabel(resource: ResourceName, field: string) {
+  return (
+    fieldCopy[`${resource}.${field}`]?.label ??
+    fieldCopy[field]?.label ??
+    field.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase())
+  );
+}
+
+function fieldHint(resource: ResourceName, field: string) {
+  return fieldCopy[`${resource}.${field}`]?.hint ?? fieldCopy[field]?.hint;
+}
+
+// Resources whose form is split into titled sections (mirrors the student
+// intake Google Form). Every field listed in admin-resources must appear here.
+const formSections: Partial<Record<ResourceName, { title: string; fields: string[] }[]>> = {
+  students: [
+    { title: "Basic info", fields: ["name", "program", "topic", "researchStatement", "image"] },
+    { title: "Status", fields: ["status", "category", "joiningYear", "workplace"] },
+    { title: "Profiles & contact", fields: ["linkedinLink", "scholarLink", "email"] },
+    { title: "Display", fields: ["sortOrder"] }
+  ]
+};
+
 function FieldInput({ field, value, onChange, active }: { field: string; value: unknown; onChange: (value: string) => void; active: ResourceName }) {
   const isLong = ["description", "objectives", "topics", "researchStatement"].includes(field);
-  const label = field.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase());
+  const label = fieldLabel(active, field);
+  const hint = fieldHint(active, field);
   const normalized = Array.isArray(value) ? value.join("\n") : String(value ?? "");
   const isStatusSelect = active === "projects" && field === "status";
   const isCategorySelect = active === "students" && field === "category";
   const isTypeSelect = active === "publications" && field === "type";
   const isProgramSelect = active === "students" && field === "program";
+  const isStudentStatus = active === "students" && field === "status";
   const isPositionSelect = active === "hero" && field === "position";
+  const isProfileLink = ["scholarLink", "linkedinLink", "link"].includes(field);
   const requiredFields = new Set(["title", "status", "description", "name", "program", "topic", "researchStatement", "year", "category", "targetYear", "code", "term", "level", "authors", "type"]);
   const isRequired = requiredFields.has(field) && !["image", "link", "objectives", "publications", "impact", "sortOrder"].includes(field);
   const isImageField = field === "image";
+  const hintNode = hint ? <span className="mt-1 block text-xs leading-5 text-slate-500">{hint}</span> : null;
 
   if (isImageField) {
     const isHero = active === "hero";
     return (
-      <label className={`block ${isHero ? "md:col-span-2" : ""}`}>
+      <label className={`block ${isHero || active === "students" ? "md:col-span-2" : ""}`}>
         <span className="block text-sm font-semibold text-slate-700">{label}{isHero ? " *" : ""}</span>
-        {isHero ? (
-          <span className="mt-1 block text-xs text-slate-500">Use a wide landscape photo (at least 1920×1080). Text sits on top, so busy areas get darkened.</span>
-        ) : null}
+        {hintNode}
         <ImageField value={normalized} onChange={onChange} />
       </label>
     );
@@ -519,7 +587,8 @@ function FieldInput({ field, value, onChange, active }: { field: string; value: 
   if (isPositionSelect) {
     return (
       <label>
-        <span className="block text-sm font-semibold text-slate-700">Focus (part of photo kept visible)</span>
+        <span className="block text-sm font-semibold text-slate-700">{label}</span>
+        {hintNode}
         <select
           value={normalized || "center"}
           onChange={(event) => onChange(event.target.value)}
@@ -538,6 +607,7 @@ function FieldInput({ field, value, onChange, active }: { field: string; value: 
   return (
     <label className={isLong ? "md:col-span-2" : ""}>
       <span className="block text-sm font-semibold text-slate-700">{label}{isRequired ? " *" : ""}</span>
+      {hintNode}
       {isLong ? (
         <textarea
           value={normalized}
@@ -566,8 +636,8 @@ function FieldInput({ field, value, onChange, active }: { field: string; value: 
           className="focus-ring mt-2 w-full cursor-pointer rounded-lg border border-slate-300 px-3 py-2 text-sm"
           required={isRequired}
         >
-          <option>Current</option>
-          <option>Placed</option>
+          <option value="Current">Current students</option>
+          <option value="Placed">Placed alumni</option>
         </select>
       ) : isTypeSelect ? (
         <select
@@ -578,7 +648,23 @@ function FieldInput({ field, value, onChange, active }: { field: string; value: 
         >
           <option>Journal</option>
           <option>Conference</option>
+          <option>Thesis</option>
         </select>
+      ) : isStudentStatus ? (
+        <>
+          <input
+            value={normalized}
+            onChange={(event) => onChange(event.target.value)}
+            list="student-status-options"
+            className="focus-ring mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            placeholder="Currently Pursuing or Graduated"
+            required={isRequired}
+          />
+          <datalist id="student-status-options">
+            <option value="Currently Pursuing" />
+            <option value="Graduated" />
+          </datalist>
+        </>
       ) : isProgramSelect ? (
         <>
           <input
@@ -600,18 +686,14 @@ function FieldInput({ field, value, onChange, active }: { field: string; value: 
           value={normalized}
           onChange={(event) => onChange(event.target.value)}
           className="focus-ring mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-          type={
-            ["year", "sortOrder", "publications"].includes(field)
-              ? "number"
-              : ["scholarLink", "linkedinLink"].includes(field)
-                ? "url"
-                : "text"
-          }
+          type={["year", "sortOrder", "publications"].includes(field) ? "number" : field === "email" ? "email" : "text"}
+          inputMode={isProfileLink ? "url" : undefined}
+          autoCapitalize={isProfileLink || field === "email" ? "off" : undefined}
           placeholder={
             field === "scholarLink"
-              ? "https://scholar.google.com/citations?user=..."
+              ? "scholar.google.com/citations?user=…"
               : field === "linkedinLink"
-                ? "https://linkedin.com/in/..."
+                ? "linkedin.com/in/username"
                 : field === "joiningYear"
                   ? "e.g. 2023 or Aug 2023"
                   : field === "workplace"

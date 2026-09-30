@@ -63,7 +63,18 @@ function normalize(resource: ResourceName, body: Record<string, unknown>) {
   if (resource === "projects") base.objectives = parseList(base.objectives);
   if (resource === "research") base.topics = parseList(base.topics);
   if (resource === "courses") base.topics = parseList(base.topics);
+  if (resource === "students") {
+    base.linkedinLink = normalizeUrl(base.linkedinLink);
+    base.scholarLink = normalizeUrl(base.scholarLink);
+  }
   return base;
+}
+
+// Accepts "linkedin.com/in/x" as well as full URLs; empty becomes null.
+function normalizeUrl(value: unknown) {
+  const text = typeof value === "string" ? value.trim() : "";
+  if (!text) return null;
+  return /^https?:\/\//i.test(text) ? text : `https://${text}`;
 }
 
 export async function PUT(request: Request, { params }: { params: { resource: string; id: string } }) {
