@@ -15,15 +15,16 @@ This stack runs three containers behind a private Docker network:
 ```
 
 - **`frontend` network** — only `nginx` and `app` attach to it.
-- **`backend` network** — only `app` and `db` attach to it. Postgres publishes
-  no port to the host, so it is unreachable from outside Docker entirely.
-- **Named volumes** (`docker volume ls`) persist data independently of
-  container lifecycle — recreating, restarting, or upgrading a container
+- **`backend` network** — only `app`, `db` and `db-backup` attach to it. It is
+  created with `--internal` (no internet access), and Postgres publishes no
+  port to the host, so it is unreachable from outside Docker entirely.
+- **External named volumes** (`docker volume ls`) persist data independently
+  of container lifecycle — recreating, restarting, or upgrading a container
   never touches this data:
   - `darshak-bhatt-db-data` — Postgres data directory. This is what makes
-    your database survive `docker compose down`, an instance reboot, or a
-    `git pull` + rebuild. It is only destroyed by an explicit
-    `docker compose down -v` or `docker volume rm`.
+    your database survive `docker compose down` (even `down -v`), an
+    instance reboot, or a rebuild. It is only destroyed by an explicit
+    `docker volume rm darshak-bhatt-db-data`.
   - `darshak-bhatt-app-uploads` — images uploaded through the admin panel
     (`/api/admin/upload`) are written straight to disk under
     `public/uploads`, which this volume backs. No external service
@@ -51,9 +52,39 @@ Point `docker compose` at whichever file applies with `--env-file`:
 # local
 docker compose --env-file .env.local up -d
 
-# production (on the EC2 instance)
+# production (on the EC2 instance) — use docker/deploy.sh instead, see below
 docker compose --env-file .env.production up -d
 ```
+
+### `npm run dev` on your own machine
+
+`npm run dev` needs a `DATABASE_URL`. To let it use the local Docker
+database (same data as the Docker site at `http://localhost`), create a
+**git-ignored** `docker-compose.override.yml` next to `docker-compose.yml`:
+
+```yaml
+services:
+  db:
+    ports:
+      - "127.0.0.1:5433:5432"
+    networks:
+      - backend
+      - dev-db-access
+networks:
+  dev-db-access:
+    name: darshak-bhatt-dev-db-access
+```
+
+and add to `.env.local`:
+
+```bash
+DATABASE_URL=postgresql://app:localdevpassword@127.0.0.1:5433/app?schema=public
+```
+
+Then `docker compose --env-file .env.local up -d db` once. Never create this
+override on the server — there the database must stay unreachable. (On
+Windows with Docker inside WSL, keep a WSL terminal open; when WSL goes idle it
+stops Docker, and `npm run dev` then can't reach the database.)
 
 ## This deployment's instance
 
@@ -92,67 +123,111 @@ Log out/in (or `newgrp docker`) so your shell picks up the `docker` group.
 git clone <your-repo-url> app && cd app
 nano .env.production   # fill in POSTGRES_PASSWORD, AUTH_SECRET,
                         # ADMIN_EMAIL, ADMIN_PASSWORD with real values
-
-docker compose --env-file .env.production build
-docker compose --env-file .env.production up -d
-docker compose logs -f app   # watch migrations run, then the server start
+bash docker/deploy.sh   # creates volumes/networks, builds, starts, health-checks
+bash docker/install-auto-deploy.sh   # once: deploy every push automatically
 ```
 
 On first boot the `app` container waits for Postgres, runs
-`prisma migrate deploy`, and starts the server. To also seed the initial
-admin user + sample content on that first boot, set `RUN_SEED_ON_BOOT=true`
-in `.env.production` before `up -d`, then **set it back to `false`** and
-run `up -d app` again — the seed script deletes and re-inserts all
-Project/Research/Patent/Student/Goal/Course rows every time it runs, so
-leaving it `true` will silently wipe content you add later.
+`prisma migrate deploy`, creates the admin account, and starts the server.
+Sections that are completely empty get starter content; **the seed never
+deletes or changes existing data** (CI re-checks this on every push).
 
-Visit `http://13.201.172.206/` to confirm the site loads, and
-`http://13.201.172.206/api/health` to confirm the app can reach the
-database (`{"status":"ok"}`).
+### Deploying updates
 
-## 3b. Automatic deploys via GitHub Actions (CI/CD)
+**Never deploy by hand with `git pull` + `docker compose up`.** Use:
 
-[`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) SSHes into
-the EC2 instance on every push to `main` and re-deploys: `git pull` →
-`docker compose build app` → `docker compose up -d`. Postgres and the
-uploads volume are untouched — this only rebuilds/restarts the `app`
-container. One-time setup, done once on your machine + GitHub, never by CI:
-
-**a. Generate a dedicated deploy key (don't reuse your personal SSH key):**
 ```bash
-ssh-keygen -t ed25519 -f ./deploy_key -N "" -C "github-actions-deploy"
-```
-This creates `deploy_key` (private) and `deploy_key.pub` (public) in your
-current directory.
-
-**b. Authorize the public key on the EC2 instance:**
-```bash
-ssh-copy-id -i ./deploy_key.pub ec2-user@13.201.172.206
-# or manually: paste deploy_key.pub into ~/.ssh/authorized_keys on the box
+bash docker/deploy.sh
 ```
 
-**c. Make sure the repo is already cloned to `~/app` on the instance** with
-`.env.production` filled in (steps 2–3 above) — the workflow only pulls and
-restarts, it does not clone or create env files.
+On a server that doesn't have `docker/deploy.sh` yet, run it once straight
+from GitHub instead (don't `git pull` first — this way the version that is
+live right now stays the automatic-rollback target):
 
-**d. Add three repository secrets** on GitHub
-(`Settings → Secrets and variables → Actions → New repository secret`):
+```bash
+cd ~/app && git fetch origin main \
+  && git show origin/main:docker/deploy.sh > /tmp/rishi-deploy.sh \
+  && APP_DIR="$PWD" bash /tmp/rishi-deploy.sh
+```
 
-| Secret name | Value |
-|---|---|
-| `EC2_HOST` | `13.201.172.206` |
-| `EC2_USER` | `ec2-user` |
-| `EC2_SSH_KEY` | full contents of the `deploy_key` **private** key file |
+It (1) makes sure the external volumes/networks exist, (2) forces
+`RUN_SEED_ON_BOOT=false`, (3) backs up the database and **aborts if the
+backup fails**, (4) updates the code like `git pull --ff-only` (local edits
+on the server are kept), (5) builds — if the build fails the current site
+keeps running — and (6) restarts and health-checks, **rolling back
+automatically** if the new version is unhealthy.
 
-**e. Delete the local `deploy_key` / `deploy_key.pub` files** once the
-secret is saved — don't leave the private key sitting on disk or commit it.
+With `docker/install-auto-deploy.sh` installed, the server checks GitHub every
+2 minutes and runs `deploy.sh` for each new commit on `main`. It only makes
+outgoing requests (like `git pull`), so it works behind the institute
+firewall. Logs: `journalctl -u rishi-deploy -f`. A commit that fails to build
+is skipped until the next push.
 
-From then on, every push to `main` (or a manual run from the Actions tab)
-redeploys automatically. Watch progress under the repo's **Actions** tab.
+GitHub Actions can't deploy (the firewall blocks inbound SSH), so
+[`ci.yml`](../.github/workflows/ci.yml) is the safety net instead: on every
+push it builds the app, applies all migrations to a fresh database, and checks
+that running the seed against existing data changes nothing. **A red ❌ on a
+commit means: don't deploy it.**
 
-Database schema changes still go out safely: `prisma migrate deploy` runs
-inside `docker/entrypoint.sh` on every container start, so a merged
-migration ships automatically with the next deploy.
+### Where the data lives (persistence)
+
+| What | Docker volume | Protection |
+|---|---|---|
+| Database | `darshak-bhatt-db-data` | `external` + daily & pre-deploy backups |
+| Uploaded images | `darshak-bhatt-app-uploads` | `external` |
+| TLS certificates | `darshak-bhatt-nginx-certs` | `external` |
+
+`external` volumes are never created, replaced or removed by Docker Compose —
+not by `up`, `down`, or even `docker compose down -v`. The only way to lose
+them is an explicit `docker volume rm <name>`; don't. Networks are fixed too:
+`darshak-bhatt-frontend` (nginx, app, certbot) and the internal
+`darshak-bhatt-backend` (app, db, db-backup — no internet access).
+
+Backups are written to `~/app/backups/`: `daily-YYYY-MM-DD.sql.gz` (kept 14
+days) and `pre-deploy-*.sql.gz` (last 30). Copy them off the server now and
+then, and enable EBS snapshots for the instance in the AWS console.
+
+Restore a backup:
+```bash
+gunzip -c backups/daily-2026-10-05.sql.gz | docker compose --env-file .env.production exec -T db \
+  sh -c 'psql -U "$POSTGRES_USER" "$POSTGRES_DB"'
+```
+
+### One time: moving the live server to this setup
+
+Run in this order on the server (each step only reads, or is safe to repeat):
+
+```bash
+cd ~/app && git fetch origin main
+
+# 1. Save any deleted rows still on disk BEFORE deploying (a deploy writes to the DB).
+for f in recover-deleted-rows.sh recover-inner.sh; do git show origin/main:docker/$f > /tmp/$f; done
+APP_DIR="$PWD" bash /tmp/recover-deleted-rows.sh
+
+# 2. Deploy with backup + rollback (also switches RUN_SEED_ON_BOOT off).
+git show origin/main:docker/deploy.sh > /tmp/rishi-deploy.sh && APP_DIR="$PWD" bash /tmp/rishi-deploy.sh
+
+# 3. Review recovery/<time>/*.csv, then restore what's missing (preview first).
+bash docker/restore-recovered-rows.sh recovery/<time>/Student-deleted-rows.csv
+bash docker/restore-recovered-rows.sh recovery/<time>/Student-deleted-rows.csv --apply
+
+# 4. From now on, deploy every push to main automatically.
+bash docker/install-auto-deploy.sh
+```
+
+The first deploy moves the containers onto the new fixed networks, so expect
+about a minute of downtime once.
+
+### Recovering deleted rows (no backup)
+
+```bash
+bash docker/recover-deleted-rows.sh                       # snapshot + read deleted rows
+bash docker/restore-recovered-rows.sh recovery/<time>/Student-deleted-rows.csv          # preview
+bash docker/restore-recovered-rows.sh recovery/<time>/Student-deleted-rows.csv --apply  # restore
+```
+Deleted Postgres rows usually stay on disk until vacuum reuses the space, so
+run this as soon as possible after data goes missing. The live database is
+only read; restoring skips placeholders and anything that already exists.
 
 ## 4. HTTPS (required before relying on the admin panel)
 
@@ -203,17 +278,16 @@ security group not allowing inbound `80` — the HTTP-01 challenge needs both.
 ## Operations
 
 ```bash
-# Update to a new release
-git pull
-docker compose --env-file .env.production build app
-docker compose --env-file .env.production up -d app
+# Update to a new release (backup -> pull -> build -> restart -> health check)
+bash docker/deploy.sh
 
 # Tail logs
 docker compose logs -f app
 docker compose logs -f db
+journalctl -u rishi-deploy -f      # auto-deploy runs
 
-# Back up the database
-docker compose exec db pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB" | gzip > backup-$(date +%F).sql.gz
+# Back up the database right now (daily backups also run automatically)
+docker compose --env-file .env.production exec -T db sh -c 'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' | gzip > backups/manual-$(date +%F).sql.gz
 
 # Back up uploaded images
 docker run --rm -v darshak-bhatt-app-uploads:/data -v "$PWD":/backup alpine \
@@ -222,11 +296,12 @@ docker run --rm -v darshak-bhatt-app-uploads:/data -v "$PWD":/backup alpine \
 # Restore database
 gunzip -c backup-2026-08-11.sql.gz | docker compose exec -T db psql -U "$POSTGRES_USER" "$POSTGRES_DB"
 
-# Full stack down (data survives, volumes are NOT removed)
+# Full stack down (data survives — the data volumes are external, so even
+# `docker compose down -v` leaves them alone)
 docker compose down
 
-# Danger: also deletes the Postgres + uploads volumes
-docker compose down -v
+# The ONLY command that deletes the database. Don't.
+# docker volume rm darshak-bhatt-db-data
 ```
 
 ## Resource notes for this instance

@@ -12,3 +12,11 @@ prisma/dev.db
 # SSH deploy keys — never commit these
 deploy_key
 deploy_key.pub
+
+# Database dumps written by docker/deploy.sh and the db-backup service
+backups/
+.deploy-failed
+recovery/
+
+# Local-only Docker overrides (e.g. exposing the dev database to `npm run dev`)
+docker-compose.override.yml

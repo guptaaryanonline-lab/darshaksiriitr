@@ -20,7 +20,11 @@ const nextConfig = {
   },
   async redirects() {
     // Patents were retired from the site; keep old links working.
-    return [{ source: "/patents", destination: "/publications", permanent: true }];
+    return [
+      { source: "/patents", destination: "/publications", permanent: true },
+      // Browsers and crawlers that ask for the classic path get the app icon.
+      { source: "/favicon.ico", destination: "/icon.png", permanent: true }
+    ];
   },
   async headers() {
     return [

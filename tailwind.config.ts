@@ -24,6 +24,10 @@ const config: Config = {
         "slide-in": {
           from: { transform: "translateX(100%)" },
           to: { transform: "translateX(0)" }
+        },
+        "hero-progress": {
+          from: { transform: "scaleX(0)" },
+          to: { transform: "scaleX(1)" }
         }
       }
     }

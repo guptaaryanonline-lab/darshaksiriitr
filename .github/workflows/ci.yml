@@ -1,0 +1,71 @@
+name: CI
+
+# Runs on every push. Deploys happen from the server itself
+# (docker/auto-deploy.sh) because the institute firewall blocks inbound SSH,
+# so this workflow is the safety net: a red X here means "do not deploy".
+on:
+  push:
+    branches: [main]
+  pull_request: {}
+  workflow_dispatch: {}
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: app
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U app -d app"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      DATABASE_URL: postgresql://app:app@localhost:5432/app?schema=public
+      PGPASSWORD: app
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Apply all migrations to an empty database
+        run: npx prisma migrate deploy
+
+      - name: Seed must never delete or change existing data
+        run: |
+          psql_q() { psql -h localhost -U app -d app -tAc "$1"; }
+          counts() { psql_q "select (select count(*) from \"Student\"),(select count(*) from \"Project\"),(select count(*) from \"Publication\"),(select count(*) from \"Goal\"),(select count(*) from \"Course\"),(select count(*) from \"HeroSlide\")"; }
+
+          npx tsx prisma/seed.ts
+          # A "real" student entered from the admin panel.
+          psql_q "insert into \"Student\" (id, name, program, topic, status, category, \"updatedAt\") values ('ci-real-student', 'CI Real Student', 'PhD', 'Kept', 'Currently Pursuing', 'Current', now())"
+          before="$(counts)"
+
+          RUN_SEED_ON_BOOT=true npx tsx prisma/seed.ts
+          after="$(counts)"
+
+          echo "before: $before"
+          echo "after:  $after"
+          [ "$before" = "$after" ] || { echo "Seed changed existing data!"; exit 1; }
+          [ "$(psql_q "select count(*) from \"Student\" where id = 'ci-real-student'")" = "1" ] || { echo "Seed deleted a real student!"; exit 1; }
+
+      - name: Re-running migrations is a no-op
+        run: npx prisma migrate deploy
+
+      - name: Production build
+        run: npm run build
+
+      - name: Shell scripts parse
+        run: |
+          for f in docker/*.sh; do bash -n "$f"; done

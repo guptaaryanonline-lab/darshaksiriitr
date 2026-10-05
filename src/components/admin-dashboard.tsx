@@ -271,7 +271,8 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-5 sm:gap-6 sm:px-8 sm:py-8 lg:grid-cols-[240px_1fr] lg:px-10">
+      {/* minmax(0, …) stops the scrollable tab row from stretching the page wider than the screen on phones. */}
+      <div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)] gap-4 px-4 py-5 sm:gap-6 sm:px-8 sm:py-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:px-10">
         <aside className="h-fit rounded-xl border border-slate-200 bg-white p-2 shadow-soft lg:sticky lg:top-24">
           <nav className="-mx-2 flex snap-x gap-1.5 overflow-x-auto scroll-px-2 px-2 pb-1 lg:mx-0 lg:snap-none lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0">
             {(Object.keys(resources) as ResourceName[]).map((resource) => (
@@ -289,7 +290,7 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
           </nav>
         </aside>
 
-        <section className="grid gap-6">
+        <section className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
           {!formOpen ? (
             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-soft">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -307,15 +308,15 @@ export function AdminDashboard({ email, initialData }: { email: string; initialD
             </div>
           ) : (
             <form onSubmit={save} className="rounded-xl border border-slate-200 bg-white p-5 shadow-soft sm:p-6">
-              <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
+              <div className="mb-5 flex items-start justify-between gap-4">
+                <div className="min-w-0">
                   <h2 className="text-lg font-semibold text-ink sm:text-xl">{title}</h2>
                   <p className="mt-1 text-sm text-slate-500">{resources[active].label} content is stored in the database.</p>
                 </div>
                 <button
                   type="button"
                   onClick={closeForm}
-                  className={`${secondaryButton} shrink-0`}
+                  className={`${secondaryButton} shrink-0 !px-3.5 sm:!px-4`}
                   aria-label={`Close ${resources[active].label} form`}
                 >
                   <X className="h-4 w-4" />

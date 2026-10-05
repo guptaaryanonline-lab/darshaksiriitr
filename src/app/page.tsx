@@ -15,9 +15,8 @@ export default async function HomePage() {
     <main>
       <SiteHeader />
 
-      <section className="relative flex min-h-[calc(100dvh-65px)] items-center overflow-hidden">
-        <HeroCarousel slides={hero} />
-        <div className="relative mx-auto w-full max-w-7xl px-5 py-14 sm:px-8 sm:py-24 lg:px-10">
+      <HeroCarousel slides={hero.map(({ image, position, caption }) => ({ image, position, caption }))}>
+        <div className="relative mx-auto w-full max-w-7xl px-5 pb-24 pt-14 sm:px-8 sm:py-24 lg:px-10">
           <div className="max-w-3xl text-white">
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-cyan-100">RISHI Lab, IIT Roorkee</p>
             <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">Dr. Darshak Bhatt</h1>
@@ -35,7 +34,7 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </HeroCarousel>
 
       <section className="section-shell grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div>

@@ -116,10 +116,41 @@ services:
           cpus: "0.5"
           memory: 256m
 
+  # Daily compressed database dump into ./backups on the host (kept 14 days).
+  # Restore: see "Where the data lives" in docker/README.md.
+  db-backup:
+    image: postgres:16-alpine
+    container_name: db-backup
+    restart: unless-stopped
+    # Shell-script service: a tiny init forwards the stop signal so restarts
+    # take a moment instead of a 10-second forced kill.
+    init: true
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER:-app}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      PGDATABASE: ${POSTGRES_DB:-app}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+    volumes:
+      - ./backups:/backups
+      - ./docker/db-backup.sh:/db-backup.sh:ro
+    entrypoint: ["/bin/sh", "/db-backup.sh"]
+    networks:
+      - backend
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
   certbot:
     image: certbot/certbot:latest
     container_name: certbot
     restart: unless-stopped
+    init: true
     depends_on:
       - nginx
     environment:
@@ -130,29 +161,43 @@ services:
       - certbot-webroot:/var/www/certbot
       - ./docker/certbot-entrypoint.sh:/certbot-entrypoint.sh:ro
     entrypoint: ["/bin/sh", "/certbot-entrypoint.sh"]
+    networks:
+      - frontend
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
+# Networks and the data volumes below are created once by
+# docker/setup-volumes.sh (docker/deploy.sh runs it automatically) and are
+# marked `external`, so Docker Compose never creates, replaces or deletes
+# them — not on `up`, not on `down`, not even on `docker compose down -v`.
 networks:
-  # Internet-facing side: only nginx and the app live here.
+  # Internet-facing side: nginx, the app, and certbot.
   frontend:
-    driver: bridge
-  # Private side: only the app can reach the database. Postgres has no
-  # published host port, so it is unreachable from outside the Docker host.
+    name: darshak-bhatt-frontend
+    external: true
+  # Private side: the app, the database and its backup job. Created with
+  # --internal, so containers that are only on this network (db, db-backup)
+  # have no internet access at all; Postgres also publishes no host port.
   backend:
-    driver: bridge
-    internal: false
+    name: darshak-bhatt-backend
+    external: true
 
 volumes:
+  # Precious data — external, survives anything except an explicit
+  # `docker volume rm <name>`. Same names as before, so existing data is kept.
   db-data:
     name: darshak-bhatt-db-data
+    external: true
   app-uploads:
     name: darshak-bhatt-app-uploads
+    external: true
   nginx-certs:
     name: darshak-bhatt-nginx-certs
+    external: true
+  # Disposable — regenerated automatically.
   certbot-webroot:
     name: darshak-bhatt-certbot-webroot
   nginx-conf-active:
