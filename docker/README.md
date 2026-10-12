@@ -123,8 +123,8 @@ Log out/in (or `newgrp docker`) so your shell picks up the `docker` group.
 git clone <your-repo-url> app && cd app
 nano .env.production   # fill in POSTGRES_PASSWORD, AUTH_SECRET,
                         # ADMIN_EMAIL, ADMIN_PASSWORD with real values
-bash docker/deploy.sh   # creates volumes/networks, builds, starts, health-checks
-bash docker/install-auto-deploy.sh   # once: deploy every push automatically
+bash docker/deploy.sh   # creates volumes/networks, builds, starts, health-checks,
+                        # and installs auto-deploy for every later push
 ```
 
 On first boot the `app` container waits for Postgres, runs
@@ -195,24 +195,22 @@ gunzip -c backups/daily-2026-10-05.sql.gz | docker compose --env-file .env.produ
 
 ### One time: moving the live server to this setup
 
-Run in this order on the server (each step only reads, or is safe to repeat):
+One command on the server does everything — switches `RUN_SEED_ON_BOOT`
+off, backs up the database, snapshots rows the old seed deleted into
+`recovery/` (only when coming from that old version), deploys with rollback,
+and installs the auto-deploy timer so every later push deploys itself:
 
 ```bash
-cd ~/app && git fetch origin main
+cd ~/app && git fetch origin main \
+  && git show origin/main:docker/deploy.sh > /tmp/rishi-deploy.sh \
+  && APP_DIR="$PWD" bash /tmp/rishi-deploy.sh
+```
 
-# 1. Save any deleted rows still on disk BEFORE deploying (a deploy writes to the DB).
-for f in recover-deleted-rows.sh recover-inner.sh; do git show origin/main:docker/$f > /tmp/$f; done
-APP_DIR="$PWD" bash /tmp/recover-deleted-rows.sh
+Then review `recovery/<time>/*.csv` and restore what's missing (preview first):
 
-# 2. Deploy with backup + rollback (also switches RUN_SEED_ON_BOOT off).
-git show origin/main:docker/deploy.sh > /tmp/rishi-deploy.sh && APP_DIR="$PWD" bash /tmp/rishi-deploy.sh
-
-# 3. Review recovery/<time>/*.csv, then restore what's missing (preview first).
+```bash
 bash docker/restore-recovered-rows.sh recovery/<time>/Student-deleted-rows.csv
 bash docker/restore-recovered-rows.sh recovery/<time>/Student-deleted-rows.csv --apply
-
-# 4. From now on, deploy every push to main automatically.
-bash docker/install-auto-deploy.sh
 ```
 
 The first deploy moves the containers onto the new fixed networks, so expect

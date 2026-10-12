@@ -11,6 +11,12 @@
 #   4. build; if the build fails, the current site simply keeps running
 #   5. restart and wait for the health check; if the new version is
 #      unhealthy, roll back to the previous version automatically
+#   6. install the auto-deploy timer if it isn't installed yet, so after one
+#      manual deploy every push to main deploys itself
+#
+# When upgrading from a version whose seed wiped the content tables, it also
+# snapshots the deleted rows into recovery/ before the new version touches
+# the database (see docker/recover-deleted-rows.sh).
 #
 # Data lives in external Docker volumes that Compose can't delete. Never run
 # `docker volume rm darshak-bhatt-db-data` (that is the only way to lose it).
@@ -63,10 +69,18 @@ main() {
     echo "[deploy] Code already at $(git rev-parse --short HEAD); rebuilding anyway."
   fi
 
+  # Leaving a version whose seed deleted every student/project/... on boot:
+  # save the deleted rows still on disk before migrations write to the database.
+  if git show "$previous:prisma/seed.ts" 2> /dev/null | grep -q 'deleteMany'; then
+    echo "[deploy] The previous version's seed wiped content tables — saving deleted rows to recovery/ first."
+    bash docker/recover-deleted-rows.sh || echo "[deploy] Recovery snapshot failed (deploy continues); see the output above."
+  fi
+
   # Persistent volumes and networks (no-op when they exist; data is never touched).
   bash docker/setup-volumes.sh
 
   # 4. Build. A failed build leaves the running site untouched.
+  export GIT_SHA="$target" BUILT_AT="$(date -u +%FT%TZ)"
   if ! "${compose[@]}" build app; then
     echo "[deploy] Build FAILED for $(git rev-parse --short "$target"). The current site is still running the previous version."
     git reset --keep "$previous"
@@ -80,6 +94,7 @@ main() {
     rm -f .deploy-failed
     docker image prune -f > /dev/null
     echo "[deploy] Healthy. Deployed $(git rev-parse --short HEAD)."
+    ensure_auto_deploy || echo "[deploy] Could not install auto-deploy; run once: bash docker/install-auto-deploy.sh"
     return 0
   fi
 
@@ -87,6 +102,7 @@ main() {
   "${compose[@]}" logs --tail 40 app || true
   echo "$target" > .deploy-failed
   git reset --keep "$previous"
+  export GIT_SHA="$previous" BUILT_AT="$(date -u +%FT%TZ)"
   "${compose[@]}" build app
   "${compose[@]}" up -d --remove-orphans
   wait_healthy "${compose[@]}" && echo "[deploy] Rolled back; site is up on the previous version."
@@ -115,6 +131,18 @@ backup_database() {
   fi
   echo "[deploy] Database backed up to backups/$file ($size bytes)"
   { ls -1t backups/pre-deploy-*.sql.gz 2> /dev/null || true; } | tail -n +31 | xargs -r rm -f --
+}
+
+# GitHub can't reach the server, so the server pulls new commits itself via a
+# systemd timer. Install it on the first deploy (needs passwordless sudo,
+# which ec2-user has on Amazon Linux).
+ensure_auto_deploy() {
+  systemctl is-enabled --quiet rishi-deploy.timer 2> /dev/null && return 0
+  if ! sudo -n true 2> /dev/null; then
+    echo "[deploy] Auto-deploy is not installed and sudo needs a password — run once: bash docker/install-auto-deploy.sh"
+    return 0
+  fi
+  bash docker/install-auto-deploy.sh
 }
 
 wait_healthy() {

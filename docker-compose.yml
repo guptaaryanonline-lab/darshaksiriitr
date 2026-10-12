@@ -38,6 +38,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        GIT_SHA: ${GIT_SHA:-unknown}
+        BUILT_AT: ${BUILT_AT:-unknown}
     image: darshak-bhatt-web:latest
     container_name: app
     restart: unless-stopped

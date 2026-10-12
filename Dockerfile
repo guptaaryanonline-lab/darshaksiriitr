@@ -36,6 +36,12 @@ RUN npm run build
 # runner: minimal production image
 # =========================================================================
 FROM base AS runner
+# Set by docker/deploy.sh; shown at /api/admin/version. Declared in this
+# stage only so a new commit doesn't invalidate the build-stage cache.
+ARG GIT_SHA=unknown
+ARG BUILT_AT=unknown
+ENV APP_COMMIT=$GIT_SHA
+ENV APP_BUILT_AT=$BUILT_AT
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
