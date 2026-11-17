@@ -1,15 +1,30 @@
 import { Briefcase, GraduationCap, Linkedin, Mail } from "lucide-react";
 import Image from "next/image";
+import type { ReactNode } from "react";
 import type { Student } from "@prisma/client";
 
-export function StudentGrid({ title, subtitle, students }: { title: string; subtitle?: string; students: Student[] }) {
+export function StudentGrid({
+  id,
+  title,
+  subtitle,
+  students,
+  total,
+  footer
+}: {
+  id?: string;
+  title: string;
+  subtitle?: string;
+  students: Student[];
+  total?: number;
+  footer?: ReactNode;
+}) {
   if (students.length === 0) return null;
 
   return (
-    <section>
+    <section id={id} className="scroll-mt-24">
       <div className="flex items-baseline gap-3">
         <h2 className="text-2xl font-semibold tracking-tight text-ink">{title}</h2>
-        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-sm font-semibold tabular-nums text-slate-600">{students.length}</span>
+        <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-sm font-semibold tabular-nums text-slate-600">{total ?? students.length}</span>
       </div>
       {subtitle && <p className="mt-2 max-w-2xl leading-6 text-slate-600">{subtitle}</p>}
 
@@ -18,6 +33,7 @@ export function StudentGrid({ title, subtitle, students }: { title: string; subt
           <StudentCard key={student.id} student={student} />
         ))}
       </div>
+      {footer && <div className="mt-8">{footer}</div>}
     </section>
   );
 }

@@ -8,16 +8,19 @@ interface PaginationProps {
   totalPages: number;
   baseUrl: string;
   params?: Record<string, string>;
+  /** Query key holding the page number (default "page"). */
+  pageParam?: string;
+  /** Optional anchor appended to links so the view stays on the section. */
+  hash?: string;
 }
 
-export function Pagination({ page, totalPages, baseUrl, params = {} }: PaginationProps) {
+export function Pagination({ page, totalPages, baseUrl, params = {}, pageParam = "page", hash }: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  const queryString = new URLSearchParams({ ...params, page: String(page) }).toString();
-
   const getUrl = (p: number) => {
-    const qs = new URLSearchParams({ ...params, page: String(p) }).toString();
-    return `${baseUrl}?${qs}`;
+    const clean = Object.fromEntries(Object.entries(params).filter(([, v]) => v));
+    const qs = new URLSearchParams({ ...clean, [pageParam]: String(p) }).toString();
+    return `${baseUrl}?${qs}${hash ? `#${hash}` : ""}`;
   };
 
   return (
@@ -48,6 +51,8 @@ export function Pagination({ page, totalPages, baseUrl, params = {} }: Paginatio
                   {showDots && <span className="px-1 text-slate-400">...</span>}
                   <Link
                     href={getUrl(p)}
+                    scroll={!hash}
+                    aria-current={p === page ? "page" : undefined}
                     className={`inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full font-medium transition duration-200 ${
                       p === page ? "bg-navy text-white" : "border border-slate-200 text-slate-700 hover:bg-slate-50"
                     }`}

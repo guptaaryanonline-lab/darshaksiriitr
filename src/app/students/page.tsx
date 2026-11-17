@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/site-header";
 import { StudentGrid } from "@/components/student-grid";
+import { Pagination } from "@/components/pagination";
 import { getStudentGroups } from "@/lib/content";
 import Link from "next/link";
 import { Users } from "lucide-react";
@@ -11,8 +12,19 @@ export const metadata = {
   description: "Meet the researchers and students of RISHI Lab, and the alumni who trained here."
 };
 
-export default async function StudentsPage() {
+const PER_PAGE = 12;
+
+function paginate<T>(items: T[], raw: string | string[] | undefined) {
+  const totalPages = Math.max(1, Math.ceil(items.length / PER_PAGE));
+  const requested = Number(Array.isArray(raw) ? raw[0] : raw) || 1;
+  const page = Math.min(Math.max(1, Math.floor(requested)), totalPages);
+  return { page, totalPages, items: items.slice((page - 1) * PER_PAGE, page * PER_PAGE) };
+}
+
+export default async function StudentsPage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
   const { current, placed } = await getStudentGroups();
+  const currentPage = paginate(current, searchParams.cpage);
+  const placedPage = paginate(placed, searchParams.apage);
 
   return (
     <main>
@@ -29,14 +41,38 @@ export default async function StudentsPage() {
 
         <div className="space-y-12 sm:space-y-16">
           <StudentGrid
+            id="current"
             title="Current Students"
             subtitle="Active PhD scholars, M.Tech students, and researchers currently working at RISHI Lab."
-            students={current}
+            students={currentPage.items}
+            total={current.length}
+            footer={
+              <Pagination
+                page={currentPage.page}
+                totalPages={currentPage.totalPages}
+                baseUrl="/students"
+                pageParam="cpage"
+                hash="current"
+                params={{ apage: placedPage.page > 1 ? String(placedPage.page) : "" }}
+              />
+            }
           />
           <StudentGrid
+            id="alumni"
             title="Placed Alumni"
             subtitle="Alumni who trained at RISHI Lab and have moved on to academia and industry."
-            students={placed}
+            students={placedPage.items}
+            total={placed.length}
+            footer={
+              <Pagination
+                page={placedPage.page}
+                totalPages={placedPage.totalPages}
+                baseUrl="/students"
+                pageParam="apage"
+                hash="alumni"
+                params={{ cpage: currentPage.page > 1 ? String(currentPage.page) : "" }}
+              />
+            }
           />
 
           {current.length === 0 && placed.length === 0 && (

@@ -21,7 +21,8 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Rec
       <SiteHeader />
 
       <section className="section-shell pt-8">
-        <div className="mb-8 max-w-3xl">
+        <div className="mb-8 flex flex-col gap-6 border-b border-slate-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-3xl">
           <p className="eyebrow">Portfolio</p>
           <h1 className="mt-3 text-3xl font-semibold text-ink sm:text-4xl">Research Projects</h1>
           <p className="mt-4 leading-7 text-slate-700">
@@ -29,6 +30,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Rec
           </p>
         </div>
 
+        <div className="shrink-0">
         <SearchFilter
           pageUrl="/projects"
           showSearch={false}
@@ -46,8 +48,10 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Rec
             { label: "Publications", value: "publications" }
           ]}
         />
+        </div>
+        </div>
 
-        <div className="mt-8 space-y-6">
+        <div className="space-y-6">
           {data.projects.length > 0 ? (
             data.projects.map((project, idx) => (
               <article key={project.id} className="group rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md hover:border-slate-300 overflow-hidden">

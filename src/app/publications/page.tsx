@@ -192,6 +192,17 @@ export default async function PublicationsPage({
                                     </p>
                                   ) : null}
                                 </div>
+                                {pub.link && (
+                                  <a
+                                    href={pub.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="mt-3 mr-4 inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-navy transition duration-150 hover:text-ink"
+                                  >
+                                    View paper
+                                    <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                )}
                                 {pub.doi && (
                                   <a
                                     href={`https://doi.org/${pub.doi}`}
@@ -235,7 +246,7 @@ export default async function PublicationsPage({
       </section>
 
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-sm text-slate-500">
-        <p>© 2026 Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
+        <p>© {new Date().getFullYear()} Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
       </footer>
     </main>
   );
