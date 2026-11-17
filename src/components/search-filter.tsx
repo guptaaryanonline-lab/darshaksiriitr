@@ -137,7 +137,7 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
               onClick={clearAll}
               aria-label="Clear filters"
               title="Clear filters"
-              className={`${showSearch ? "" : "lg:order-first "}inline-flex h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 text-sm font-medium text-slate-500 transition duration-200 hover:bg-slate-100 hover:text-ink`}
+              className={`inline-flex h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 text-sm font-medium text-slate-500 transition duration-200 hover:bg-slate-100 hover:text-ink`}
             >
               <X className="h-4 w-4" />
               <span className="hidden sm:inline">Clear</span>

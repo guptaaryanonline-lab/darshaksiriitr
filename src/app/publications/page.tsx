@@ -3,7 +3,7 @@ import { getPublicationPage } from "@/lib/content";
 import Link from "next/link";
 import Image from "next/image";
 import { imageFitClass, imageFrameBg } from "@/lib/image-fit";
-import { BookOpen, ExternalLink, FileText, Presentation } from "lucide-react";
+import { BookOpen, ExternalLink } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -256,25 +256,39 @@ export default async function PublicationsPage({
   );
 }
 
-// Designed cover shown when a publication has no uploaded image, so every
-// card keeps the same image-beside-text layout.
+// Typographic cover shown on desktop when a publication has no uploaded image,
+// so every card keeps the same image-beside-text layout.
 function PublicationCover({ type, year, venue }: { type: string; year: number; venue: string | null }) {
-  const Icon = type === "Journal" ? BookOpen : Presentation;
+  const mark = venueMark(venue);
   return (
-    <div className="relative hidden min-h-64 flex-col justify-between overflow-hidden bg-gradient-to-br from-navy via-navy to-teal p-6 text-white lg:flex">
-      <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-      <div aria-hidden className="pointer-events-none absolute -bottom-16 -left-10 h-44 w-44 rounded-full bg-cyan-300/20 blur-3xl" />
-      <div className="relative flex items-center justify-between">
-        <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide backdrop-blur">
-          <Icon className="h-3.5 w-3.5" />
-          {type}
-        </span>
-        <span className="text-sm font-semibold tabular-nums text-white/80">{year}</span>
+    <div className="relative hidden min-h-64 flex-col justify-between overflow-hidden border-r border-slate-200 bg-white p-7 lg:flex">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(theme(colors.slate.200)_1px,transparent_1px)] [background-size:14px_14px] [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
+      />
+      <div className="relative flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+        <span>{type}</span>
+        <span className="tabular-nums">{year}</span>
       </div>
       <div className="relative">
-        <FileText className="mb-3 h-8 w-8 text-white/70 sm:h-10 sm:w-10" />
-        {venue && <p className="line-clamp-2 text-sm font-medium leading-snug text-white/90 sm:text-base">{venue}</p>}
+        <span className="block h-px w-10 bg-navy" />
+        <p className="mt-4 break-words text-4xl font-semibold tracking-tight text-ink xl:text-5xl">{mark}</p>
+        {venue && <p className="mt-3 line-clamp-2 max-w-sm text-sm leading-relaxed text-slate-500">{venue}</p>}
       </div>
     </div>
   );
+}
+
+// Short venue name: the acronym in brackets ("… (ISCAS)") if present,
+// otherwise the initials of the significant words ("IEEE Transactions on …" → "ITMTT").
+function venueMark(venue: string | null) {
+  if (!venue) return "—";
+  const bracket = venue.match(/\(([^)]{2,12})\)/);
+  if (bracket) return bracket[1];
+  const words = venue
+    .replace(/^\d{4}\s+/, "")
+    .split(/[\s,/-]+/)
+    .filter((w) => /^[A-Z]/.test(w));
+  if (words[0] === "IEEE") return ["IEEE", words.slice(1).map((w) => w[0]).join("")].filter(Boolean).join(" ").slice(0, 12);
+  return words.map((w) => w[0]).join("").slice(0, 8) || venue.slice(0, 10);
 }

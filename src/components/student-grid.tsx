@@ -44,32 +44,32 @@ function StudentCard({ student }: { student: Student }) {
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg">
-      {/* Header: photo beside the name on phones, photo on top from sm up */}
-      <div className="flex items-start gap-4 p-4 sm:flex-col sm:gap-0 sm:p-0">
-        <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:aspect-[4/5] sm:h-auto sm:w-full sm:rounded-none">
+      {/* Photo on top, details below — same card on every screen size */}
+      <div className="flex flex-col">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 sm:aspect-[4/5]">
           {student.image ? (
             <Image
               src={student.image}
               alt={student.name}
               fill
-              sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 28vw, (min-width: 640px) 45vw, 64px"
+              sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 28vw, (min-width: 640px) 45vw, 100vw"
               className="object-cover object-top transition duration-500 group-hover:scale-[1.03]"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy to-teal">
-              <span className="text-xl font-semibold tracking-wide text-white/90 sm:text-4xl">{initials(student.name)}</span>
+              <span className="text-4xl font-semibold tracking-wide text-white/90">{initials(student.name)}</span>
             </div>
           )}
         </div>
 
-        <div className="min-w-0 flex-1 sm:px-5 sm:pt-5">
+        <div className="min-w-0 px-4 pt-4 sm:px-5 sm:pt-5">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             {student.program && (
               <span className="rounded-full bg-navy/10 px-2.5 py-0.5 text-xs font-semibold text-navy">{student.program}</span>
             )}
             {student.joiningYear && <span className="text-xs font-medium text-slate-500">Since {student.joiningYear}</span>}
           </div>
-          <h3 className="mt-1.5 break-words text-base font-semibold leading-snug text-ink sm:mt-2 sm:text-lg">{student.name}</h3>
+          <h3 className="mt-2 break-words text-lg font-semibold leading-snug text-ink">{student.name}</h3>
           {student.topic && (
             <p className="mt-1 line-clamp-2 text-sm font-medium leading-5 text-teal sm:line-clamp-3" title={student.topic}>
               {student.topic}
@@ -80,7 +80,7 @@ function StudentCard({ student }: { student: Student }) {
 
       {/* Body: always full card width */}
       <div className="flex flex-1 flex-col px-4 pb-4 sm:px-5 sm:pb-5">
-        {statement && <p className="line-clamp-3 text-sm leading-6 text-slate-600 sm:mt-2">{statement}</p>}
+        {statement && <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-600">{statement}</p>}
 
         {student.workplace && (
           <p className="mt-3 flex items-start gap-1.5 text-sm font-medium text-slate-700">
@@ -90,7 +90,7 @@ function StudentCard({ student }: { student: Student }) {
         )}
 
         {hasLinks && (
-          <div className="mt-auto flex items-center gap-2 border-t border-slate-100 pt-3 sm:border-0 sm:pt-4">
+          <div className="mt-auto flex items-center gap-2 pt-4">
             {student.linkedinLink && (
               <a
                 href={student.linkedinLink}
