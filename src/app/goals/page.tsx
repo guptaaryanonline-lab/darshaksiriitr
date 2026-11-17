@@ -71,7 +71,7 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
               </article>
             ))
           ) : (
-            <div className="col-span-full rounded-2xl border border-slate-200 bg-white p-12 text-center">
+            <div className="col-span-full rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 text-center">
               <p className="text-slate-600">No goals found matching your search.</p>
             </div>
           )}
@@ -89,7 +89,7 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
         <div className="mt-10 grid gap-6 sm:grid-cols-2">
           <Link
             href="/projects"
-            className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-md hover:border-slate-300"
+            className="group rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm transition hover:shadow-md hover:border-slate-300"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="rounded-lg bg-slate-100 p-3">
@@ -105,7 +105,7 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
 
           <Link
             href="/publications"
-            className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-md hover:border-slate-300"
+            className="group rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm transition hover:shadow-md hover:border-slate-300"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="rounded-lg bg-slate-100 p-3">
@@ -134,7 +134,7 @@ export default async function GoalsPage({ searchParams }: { searchParams: Record
       </section>
 
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-sm text-slate-500">
-        <p>© 2026 Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
+        <p>© {new Date().getFullYear()} Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
       </footer>
     </main>
   );

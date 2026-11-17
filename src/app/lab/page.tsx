@@ -84,7 +84,7 @@ export default async function LabPage() {
       <section className="section-shell pt-10 sm:pt-16">
         <div className="mb-10 max-w-2xl">
           <p className="eyebrow">Expertise</p>
-          <h2 className="mt-3 text-3xl font-semibold text-ink">Research Focus Areas</h2>
+          <h2 className="mt-3 text-2xl font-semibold text-ink sm:text-3xl">Research Focus Areas</h2>
           <p className="mt-4 leading-7 text-slate-700">
             We focus on cutting-edge topics in RF microelectronics and analog circuit design with applications spanning wireless systems, quantum technologies, and beyond.
           </p>
@@ -126,7 +126,7 @@ export default async function LabPage() {
       <section className="section-shell pt-16 pb-16">
         <div className="mb-10 max-w-2xl">
           <p className="eyebrow">Infrastructure</p>
-          <h2 className="mt-3 text-3xl font-semibold text-ink">Lab Facilities</h2>
+          <h2 className="mt-3 text-2xl font-semibold text-ink sm:text-3xl">Lab Facilities</h2>
           <p className="mt-4 leading-7 text-slate-700">
             Equipped with state-of-the-art tools and equipment for RF design, simulation, measurement, and characterization.
           </p>
@@ -158,7 +158,7 @@ export default async function LabPage() {
           <div className="grid gap-12 md:grid-cols-2">
             <div>
               <p className="eyebrow">Culture</p>
-              <h2 className="mt-3 text-3xl font-semibold text-ink">Lab Culture & Environment</h2>
+              <h2 className="mt-3 text-2xl font-semibold text-ink sm:text-3xl">Lab Culture & Environment</h2>
               <p className="mt-4 leading-7 text-slate-700 mb-6">
                 We foster an environment of innovation, collaboration, and academic rigor where students gain practical experience through hands-on research.
               </p>
@@ -214,7 +214,7 @@ export default async function LabPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-8">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
               <p className="eyebrow">Collaboration</p>
               <h3 className="mt-3 text-2xl font-semibold text-ink">Collaborative Research</h3>
               <p className="mt-4 leading-7 text-slate-700 mb-6">
@@ -246,7 +246,7 @@ export default async function LabPage() {
       <section className="section-shell pt-16 pb-12">
         <div className="max-w-3xl">
           <p className="eyebrow">Opportunities</p>
-          <h2 className="mt-3 text-3xl font-semibold text-ink">Join RISHI Lab</h2>
+          <h2 className="mt-3 text-2xl font-semibold text-ink sm:text-3xl">Join RISHI Lab</h2>
           <p className="mt-4 leading-7 text-slate-700">
             We're actively seeking motivated students and researchers passionate about RF microelectronics and cutting-edge circuit design.
           </p>
@@ -290,7 +290,7 @@ export default async function LabPage() {
       </section>
 
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-sm text-slate-500">
-        <p>© 2026 Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
+        <p>© {new Date().getFullYear()} Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
       </footer>
     </main>
   );

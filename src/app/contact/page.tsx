@@ -64,7 +64,7 @@ export default function ContactPage() {
       </section>
 
       <section className="section-shell mt-16 grid gap-8 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <h2 className="text-2xl font-semibold text-ink mb-6">Research Collaboration</h2>
           <div className="space-y-4 text-slate-700">
             <p>
@@ -79,7 +79,7 @@ export default function ContactPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <h2 className="text-2xl font-semibold text-ink mb-6">Lab Facilities</h2>
           <div className="space-y-4 text-slate-700">
             <p>
@@ -128,7 +128,7 @@ export default function ContactPage() {
       </section>
 
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-sm text-slate-500">
-        <p>© 2026 Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
+        <p>© {new Date().getFullYear()} Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
       </footer>
     </main>
   );

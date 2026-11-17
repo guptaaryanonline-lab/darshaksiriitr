@@ -19,7 +19,7 @@ export default async function HomePage() {
         <div className="relative mx-auto w-full max-w-7xl px-5 pb-24 pt-14 sm:px-8 sm:py-24 lg:px-10">
           <div className="max-w-3xl text-white">
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-cyan-100">RISHI Lab, IIT Roorkee</p>
-            <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">Dr. Darshak Bhatt</h1>
+            <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">Dr. Darshak Bhatt</h1>
             <p className="mt-6 text-lg font-medium text-white sm:text-xl">Associate Professor, Electronics and Communication Engineering</p>
             <p className="mt-5 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">
               Advancing RF microelectronics and analog circuit design for wireless, quantum, and sub-THz applications.
@@ -172,7 +172,7 @@ export default async function HomePage() {
 
       <section className="bg-slate-50">
         <div className="section-shell grid gap-6 md:grid-cols-3">
-          <article className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+          <article className="group rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Publications</p>
             <p className="mt-4 text-4xl font-semibold tabular-nums tracking-tight text-ink sm:text-5xl">{publications.length}</p>
             <p className="mt-3 leading-7 text-slate-600">Browse the lab’s journal articles and conference papers.</p>
@@ -181,7 +181,7 @@ export default async function HomePage() {
               <span aria-hidden className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
             </Link>
           </article>
-          <article className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+          <article className="group rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Students</p>
             <p className="mt-4 text-4xl font-semibold tabular-nums tracking-tight text-ink sm:text-5xl">{students.length}</p>
             <p className="mt-3 leading-7 text-slate-600">Meet the current research team and active student contributors.</p>
@@ -190,7 +190,7 @@ export default async function HomePage() {
               <span aria-hidden className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
             </Link>
           </article>
-          <article className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+          <article className="group rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Goals</p>
             <p className="mt-4 text-4xl font-semibold tabular-nums tracking-tight text-ink sm:text-5xl">{goals.length}</p>
             <p className="mt-3 leading-7 text-slate-600">Check the lab’s strategic goals, timelines, and future priorities.</p>
@@ -234,7 +234,7 @@ export default async function HomePage() {
       </section>
 
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-sm text-slate-500">
-        <p>© 2026 Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
+        <p>© {new Date().getFullYear()} Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
       </footer>
     </main>
   );

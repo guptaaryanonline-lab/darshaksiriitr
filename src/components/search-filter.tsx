@@ -69,10 +69,10 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
   const hasActiveFilters = urlQuery || filterOptions.some((f) => searchParams.has(f.key)) || searchParams.has("sort");
 
   const selectClass =
-    "focus-ring h-10 cursor-pointer appearance-none rounded-full border border-slate-300 bg-white pl-4 pr-9 text-sm font-medium text-slate-700 transition hover:border-slate-400";
+    "focus-ring h-10 w-full cursor-pointer appearance-none truncate rounded-full border border-slate-300 bg-white pl-4 pr-9 text-sm font-medium text-slate-700 transition hover:border-slate-400";
 
   return (
-    <div className={showSearch ? "flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:p-3" : "flex justify-end"}>
+    <div className={showSearch ? "flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:p-3" : "flex w-full lg:w-auto lg:justify-end"}>
       {showSearch && (
       <div className="relative min-w-0 flex-1">
         {isPending ? (
@@ -92,9 +92,9 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
       )}
 
       {(filterOptions.length > 0 || sortOptions.length > 0 || hasActiveFilters) && (
-        <div className={`flex flex-wrap items-center gap-2 ${showSearch ? "shrink-0" : "justify-end"}`}>
+        <div className={`flex w-full items-center gap-2 sm:w-auto ${showSearch ? "sm:shrink-0" : "lg:justify-end"}`}>
           {filterOptions.map((filter) => (
-            <div key={filter.key} className="relative">
+            <div key={filter.key} className="relative min-w-0 flex-1 sm:flex-none">
               <select
                 value={searchParams.get(filter.key) || ""}
                 onChange={(e) => handleFilter(filter.key, e.target.value)}
@@ -113,7 +113,7 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
           ))}
 
           {sortOptions.length > 0 && (
-            <div className="relative">
+            <div className="relative min-w-0 flex-1 sm:flex-none">
               <select
                 value={searchParams.get("sort") || ""}
                 onChange={(e) => handleSort(e.target.value)}
@@ -135,10 +135,12 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
             <button
               type="button"
               onClick={clearAll}
-              className={`${showSearch ? "" : "order-first "}inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-full px-3 text-sm font-medium text-slate-500 transition duration-200 hover:bg-slate-100 hover:text-ink`}
+              aria-label="Clear filters"
+              title="Clear filters"
+              className={`${showSearch ? "" : "lg:order-first "}inline-flex h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 text-sm font-medium text-slate-500 transition duration-200 hover:bg-slate-100 hover:text-ink`}
             >
               <X className="h-4 w-4" />
-              Clear
+              <span className="hidden sm:inline">Clear</span>
             </button>
           )}
         </div>

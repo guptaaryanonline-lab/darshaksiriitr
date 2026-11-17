@@ -44,7 +44,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Rec
           sortOptions={[
             { label: "Recent", value: "recent" },
             { label: "Title (A-Z)", value: "title" },
-            { label: "Status", value: "status" },
+            { label: "Title (Z-A)", value: "title-desc" },
             { label: "Publications", value: "publications" }
           ]}
         />
@@ -56,7 +56,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Rec
             data.projects.map((project, idx) => (
               <article key={project.id} className="group rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md hover:border-slate-300 overflow-hidden">
                 <div className="grid lg:grid-cols-[0.45fr_0.55fr]">
-                  <div className={`relative min-h-64 overflow-hidden lg:min-h-80 ${project.image ? imageFrameBg(project.image) : "bg-slate-200"}`}>
+                  <div className={`relative aspect-[16/9] overflow-hidden lg:aspect-auto lg:min-h-80 ${project.image ? imageFrameBg(project.image) : "hidden bg-slate-200 lg:block"}`}>
                     {project.image ? (
                       <Image
                         src={project.image}
@@ -73,15 +73,15 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Rec
                       </div>
                     )}
                   </div>
-                  <div className="p-6 sm:p-8 flex flex-col justify-between">
+                  <div className="flex flex-col justify-between p-5 sm:p-8">
                     <div>
                       <div className="flex items-baseline gap-3 mb-3">
                         <span className="text-sm font-bold text-navy">
-                          {String(idx + 1).padStart(2, "0")}
+                          {String((data.page - 1) * data.perPage + idx + 1).padStart(2, "0")}
                         </span>
-                        <h2 className="text-2xl font-semibold text-ink">{project.title}</h2>
+                        <h2 className="text-xl font-semibold leading-snug text-ink sm:text-2xl">{project.title}</h2>
                       </div>
-                      <div className="flex items-center gap-3 mt-2 mb-4">
+                      <div className="mb-4 mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
                         <span className="inline-block rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
                           {project.status}
                         </span>
@@ -104,7 +104,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Rec
               </article>
             ))
           ) : (
-            <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center">
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 text-center">
               <p className="text-slate-600">No projects found matching your criteria.</p>
             </div>
           )}

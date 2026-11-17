@@ -57,7 +57,8 @@ export default async function TeachingPage({ searchParams }: { searchParams: Rec
               placeholder="Search courses by code, title, or topic..."
               sortOptions={[
                 { label: "Recent", value: "recent" },
-                { label: "Title (A-Z)", value: "title" }
+                { label: "Title (A-Z)", value: "title" },
+            { label: "Title (Z-A)", value: "title-desc" }
               ]}
             />
           </div>
@@ -90,7 +91,7 @@ export default async function TeachingPage({ searchParams }: { searchParams: Rec
                 </article>
               ))
             ) : (
-              <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center">
+              <div className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 text-center">
                 <p className="text-slate-600">No courses found matching your search.</p>
               </div>
             )}
@@ -173,7 +174,7 @@ export default async function TeachingPage({ searchParams }: { searchParams: Rec
       </section>
 
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-sm text-slate-500">
-        <p>© 2026 Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
+        <p>© {new Date().getFullYear()} Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
       </footer>
     </main>
   );

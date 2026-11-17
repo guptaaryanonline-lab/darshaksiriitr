@@ -33,23 +33,24 @@ export default async function ResearchPage({ searchParams }: { searchParams: Rec
           placeholder="Search research areas..."
           sortOptions={[
             { label: "Recent", value: "recent" },
-            { label: "Title (A-Z)", value: "title" }
+            { label: "Title (A-Z)", value: "title" },
+            { label: "Title (Z-A)", value: "title-desc" }
           ]}
         />
 
         <div className="mt-8 space-y-4">
           {data.research.length > 0 ? (
             data.research.map((area, idx) => (
-              <article key={area.id} className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md hover:border-slate-300 sm:p-8">
+              <article key={area.id} className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-slate-300 sm:p-8">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-3 mb-2">
                       <span className="text-sm font-bold text-navy">
-                        {String(idx + 1).padStart(2, "0")}
+                        {String((data.page - 1) * data.perPage + idx + 1).padStart(2, "0")}
                       </span>
-                      <h2 className="text-2xl font-semibold text-ink">{area.title}</h2>
+                      <h2 className="text-xl font-semibold leading-snug text-ink sm:text-2xl">{area.title}</h2>
                     </div>
-                    <p className="mt-4 leading-7 text-slate-700">{area.description}</p>
+                    <p className="mt-3 leading-7 text-slate-700 sm:mt-4">{area.description}</p>
                     <div className="mt-6 flex flex-wrap gap-2">
                       {asStringArray(area.topics).map((topic) => (
                         <span key={topic} className="inline-block rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700">
@@ -62,7 +63,7 @@ export default async function ResearchPage({ searchParams }: { searchParams: Rec
               </article>
             ))
           ) : (
-            <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center">
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 sm:p-12 text-center">
               <p className="text-slate-600">No research areas found matching your search.</p>
             </div>
           )}
@@ -96,7 +97,7 @@ export default async function ResearchPage({ searchParams }: { searchParams: Rec
       </section>
 
       <footer className="border-t border-slate-200 bg-white py-8 text-center text-sm text-slate-500">
-        <p>© 2026 Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
+        <p>© {new Date().getFullYear()} Dr. Darshak Bhatt. RISHI Lab, IIT Roorkee.</p>
       </footer>
     </main>
   );

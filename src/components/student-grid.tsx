@@ -40,39 +40,47 @@ export function StudentGrid({
 
 function StudentCard({ student }: { student: Student }) {
   const hasLinks = Boolean(student.linkedinLink || student.scholarLink || student.email);
+  const statement = distinctStatement(student.topic, student.researchStatement);
 
   return (
-    <article className="group flex gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg sm:flex-col sm:gap-0 sm:overflow-hidden sm:p-0">
-      <div className="relative h-28 w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:aspect-[4/5] sm:h-auto sm:w-full sm:rounded-none">
-        {student.image ? (
-          <Image
-            src={student.image}
-            alt={student.name}
-            fill
-            sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 28vw, (min-width: 640px) 45vw, 96px"
-            className="object-cover object-top transition duration-500 group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy to-teal">
-            <span className="text-2xl font-semibold tracking-wide text-white/90 sm:text-4xl">{initials(student.name)}</span>
-          </div>
-        )}
-      </div>
-
-      <div className="flex min-w-0 flex-1 flex-col sm:p-5">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          {student.program && (
-            <span className="rounded-full bg-navy/10 px-2.5 py-0.5 text-xs font-semibold text-navy">{student.program}</span>
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg">
+      {/* Header: photo beside the name on phones, photo on top from sm up */}
+      <div className="flex items-start gap-4 p-4 sm:flex-col sm:gap-0 sm:p-0">
+        <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:aspect-[4/5] sm:h-auto sm:w-full sm:rounded-none">
+          {student.image ? (
+            <Image
+              src={student.image}
+              alt={student.name}
+              fill
+              sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 28vw, (min-width: 640px) 45vw, 64px"
+              className="object-cover object-top transition duration-500 group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy to-teal">
+              <span className="text-xl font-semibold tracking-wide text-white/90 sm:text-4xl">{initials(student.name)}</span>
+            </div>
           )}
-          {student.joiningYear && <span className="text-xs font-medium text-slate-500">Since {student.joiningYear}</span>}
         </div>
 
-        <h3 className="mt-2 text-base font-semibold leading-snug text-ink sm:text-lg">{student.name}</h3>
-        {student.topic && <p className="mt-1 text-sm font-medium leading-5 text-teal">{student.topic}</p>}
+        <div className="min-w-0 flex-1 sm:px-5 sm:pt-5">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            {student.program && (
+              <span className="rounded-full bg-navy/10 px-2.5 py-0.5 text-xs font-semibold text-navy">{student.program}</span>
+            )}
+            {student.joiningYear && <span className="text-xs font-medium text-slate-500">Since {student.joiningYear}</span>}
+          </div>
+          <h3 className="mt-1.5 break-words text-base font-semibold leading-snug text-ink sm:mt-2 sm:text-lg">{student.name}</h3>
+          {student.topic && (
+            <p className="mt-1 line-clamp-2 text-sm font-medium leading-5 text-teal sm:line-clamp-3" title={student.topic}>
+              {student.topic}
+            </p>
+          )}
+        </div>
+      </div>
 
-        {student.researchStatement && (
-          <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-600">{student.researchStatement}</p>
-        )}
+      {/* Body: always full card width */}
+      <div className="flex flex-1 flex-col px-4 pb-4 sm:px-5 sm:pb-5">
+        {statement && <p className="line-clamp-3 text-sm leading-6 text-slate-600 sm:mt-2">{statement}</p>}
 
         {student.workplace && (
           <p className="mt-3 flex items-start gap-1.5 text-sm font-medium text-slate-700">
@@ -82,7 +90,7 @@ function StudentCard({ student }: { student: Student }) {
         )}
 
         {hasLinks && (
-          <div className="mt-auto flex flex-wrap gap-2 pt-4">
+          <div className="mt-auto flex items-center gap-2 border-t border-slate-100 pt-3 sm:border-0 sm:pt-4">
             {student.linkedinLink && (
               <a
                 href={student.linkedinLink}
@@ -112,7 +120,7 @@ function StudentCard({ student }: { student: Student }) {
                 href={`mailto:${student.email}`}
                 aria-label={`Email ${student.name}`}
                 title={student.email}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition duration-200 hover:bg-slate-200 hover:text-ink"
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition duration-200 hover:bg-slate-200 hover:text-ink"
               >
                 <Mail className="h-4 w-4" />
               </a>
@@ -122,6 +130,16 @@ function StudentCard({ student }: { student: Student }) {
       </div>
     </article>
   );
+}
+
+// Hide the statement when it only repeats the research topic.
+function distinctStatement(topic: string | null, statement: string | null) {
+  if (!statement) return "";
+  const norm = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const a = norm(statement);
+  const b = norm(topic ?? "");
+  if (b && (a === b || b.startsWith(a) || a.startsWith(b))) return "";
+  return statement;
 }
 
 function initials(name: string) {
