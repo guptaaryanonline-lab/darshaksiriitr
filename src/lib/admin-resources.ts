@@ -13,7 +13,7 @@ export const resources = {
   },
   publications: {
     label: "Publications",
-    fields: ["title", "authors", "type", "year", "journal", "conference", "volume", "pages", "doi", "link", "sortOrder"]
+    fields: ["title", "authors", "type", "year", "journal", "conference", "volume", "pages", "doi", "link", "image", "sortOrder"]
   },
   students: {
     label: "Students",

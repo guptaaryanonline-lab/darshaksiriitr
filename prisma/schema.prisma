@@ -109,6 +109,7 @@ model Publication {
   pages       String?
   doi         String?
   link        String?
+  image       String?
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

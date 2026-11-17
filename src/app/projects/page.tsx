@@ -31,7 +31,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Rec
 
         <SearchFilter
           pageUrl="/projects"
-          placeholder="Search projects..."
+          showSearch={false}
           filterOptions={[
             {
               label: "Status",

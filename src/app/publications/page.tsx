@@ -1,6 +1,8 @@
 import { SiteHeader } from "@/components/site-header";
 import { getPublicationPage } from "@/lib/content";
 import Link from "next/link";
+import Image from "next/image";
+import { imageFitClass, imageFrameBg } from "@/lib/image-fit";
 import { BookOpen, ExternalLink } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -148,8 +150,24 @@ export default async function PublicationsPage({
                         const baseIndex =
                           filteredPublications.findIndex((p) => p.id === pub.id);
                         return (
-                          <article key={pub.id} className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm hover:shadow-md transition">
-                            <div className="flex gap-6">
+                          <article key={pub.id} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-slate-300 hover:shadow-md">
+                            <div className="grid lg:grid-cols-[0.45fr_0.55fr]">
+                              <div className={`relative min-h-56 overflow-hidden lg:min-h-72 ${pub.image ? imageFrameBg(pub.image) : "bg-slate-200"}`}>
+                                {pub.image ? (
+                                  <Image
+                                    src={pub.image}
+                                    alt={pub.title}
+                                    fill
+                                    sizes="(min-width: 1024px) 45vw, 100vw"
+                                    className={`${imageFitClass(pub.image)} transition duration-500 group-hover:scale-105`}
+                                  />
+                                ) : (
+                                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-200 to-slate-300 p-6">
+                                    <BookOpen className="h-12 w-12 text-slate-400" />
+                                  </div>
+                                )}
+                              </div>
+                            <div className="flex gap-6 p-6 sm:p-8">
                               <div className="flex-shrink-0">
                                 <p className="text-2xl font-bold text-navy">{String(baseIndex + 1).padStart(2, "0")}</p>
                               </div>
@@ -186,6 +204,7 @@ export default async function PublicationsPage({
                                   </a>
                                 )}
                               </div>
+                            </div>
                             </div>
                           </article>
                         );

@@ -57,6 +57,7 @@ const emptyItem: Record<ResourceName, Item> = {
     pages: "",
     doi: "",
     link: "",
+    image: "",
     sortOrder: 0,
   },
   students: {
@@ -531,6 +532,7 @@ const fieldCopy: Record<string, { label: string; hint?: string }> = {
   "students.linkedinLink": { label: "LinkedIn profile URL" },
   "students.scholarLink": { label: "Google Scholar profile URL" },
   "students.email": { label: "Email" },
+  "publications.image": { label: "Image", hint: "Optional figure or cover shown beside the publication." },
   "publications.doi": { label: "DOI", hint: "Only the identifier, e.g. 10.1109/ISCAS.2023.1234. Leave empty if unsure." }
 };
 

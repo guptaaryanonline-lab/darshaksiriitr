@@ -13,9 +13,10 @@ interface SearchFilterProps {
     options: { label: string; value: string }[];
   }[];
   sortOptions?: { label: string; value: string }[];
+  showSearch?: boolean;
 }
 
-export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions = [], sortOptions = [] }: SearchFilterProps) {
+export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions = [], sortOptions = [], showSearch = true }: SearchFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query") || "");
@@ -57,6 +58,7 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
 
   return (
     <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+      {showSearch && (
       <div className="relative">
         <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
@@ -68,6 +70,7 @@ export function SearchFilter({ placeholder = "Search...", pageUrl, filterOptions
           className="focus-ring h-11 w-full rounded-full border border-slate-300 bg-slate-50 pl-11 pr-4 text-sm transition focus:bg-white"
         />
       </div>
+      )}
 
       {(filterOptions.length > 0 || sortOptions.length > 0 || hasActiveFilters) && (
         <div className="flex flex-wrap items-center gap-2">
